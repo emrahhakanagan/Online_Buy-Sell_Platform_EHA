@@ -1,4 +1,6 @@
 # Online BuySell Platform EHA
+#### in progress ...
+
 
 Online BuySell Platform EHA is a web application designed for buying and selling products online. This platform offers user authentication via email, the ability to add products for sale, and facilitates the purchase of products. The project is built using Spring Boot and integrates several key functionalities to ensure a smooth user experience.
 
