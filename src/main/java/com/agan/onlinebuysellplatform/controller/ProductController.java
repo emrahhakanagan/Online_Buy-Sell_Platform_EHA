@@ -3,39 +3,33 @@ package com.agan.onlinebuysellplatform.controller;
 import com.agan.onlinebuysellplatform.model.Product;
 import com.agan.onlinebuysellplatform.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import java.util.Optional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
+    private final ServerProperties serverProperties;
 
     @GetMapping("/")
-    public String products(Model model) {
-        model.addAttribute("products", productService.listProducts());
+    public String products(@RequestParam(name = "title", required = false) String title, Model model) {
+        model.addAttribute("products", productService.listProducts(title));
         return "products";
     }
 
 
     @GetMapping("/product/{id}")
     public String productInfo(@PathVariable Long id, Model model) {
-        Optional<Product> optionalProduct = productService.getProductById(id);
+        model.addAttribute("product", productService.getProductById(id));
 
-        if(optionalProduct.isPresent()) {
-            model.addAttribute("product", optionalProduct.get());
-
-            return "product-info";
-        } else {
-            return "redirect:/";
-        }
-
+        return "product-info";
     }
 
 

@@ -1,45 +1,37 @@
 package com.agan.onlinebuysellplatform.service;
 
 import com.agan.onlinebuysellplatform.model.Product;
+import com.agan.onlinebuysellplatform.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class ProductService {
 
-    /*
-    * for now, I am using a simple service model. Later, I will add a repository
-    * */
+    private final ProductRepository productRepository;
 
-    private List<Product> products = new ArrayList<>();
-    private long ID = 0;
+    public List<Product> listProducts(String title) {
+        if (!title.isEmpty() || !title.isBlank()) return productRepository.findByTitle(title);
 
-    {
-        products.add(new Product(++ID, "PlayStation 5", "Simple description", 550, "Berlin",
-                "emrah"));
-        products.add(new Product(++ID, "IPhone 15 Pro", "Simple description", 1070, "Wiesbaden",
-                "hakan"));
-    }
-
-    public List<Product> listProducts() {
-        return products;
+        return productRepository.findAll();
     }
 
     public void saveProduct(Product product) {
-        product.setId(++ID);
-        products.add(product);
+        log.info("Saving new {}", product);
+
+        productRepository.save(product);
     }
 
     public void deleteProduct(Long id) {
-        products.removeIf(product -> product.getId().equals(id));
+        productRepository.deleteById(id);
     }
 
-    public Optional<Product> getProductById(Long id) {
-        return products.stream()
-                .filter(product -> product.getId().equals(id))
-                .findFirst();
+    public Product getProductById(Long id) {
+        return productRepository.findById(id).orElse(null);
     }
 }
