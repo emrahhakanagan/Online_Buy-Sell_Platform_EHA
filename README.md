@@ -1,12 +1,14 @@
-# Online BuySell Platform EHA
+<img src="./images/logo.jpg" alt="logo" style="width:150px;height:auto;">
+
+# Online Buy-Sell Platform EHA
 #### in progress ...
 
 
-Online BuySell Platform EHA is a web application designed for buying and selling products online. This platform offers user authentication via email, the ability to add products for sale, and facilitates the purchase of products. The project is built using Spring Boot and integrates several key functionalities to ensure a smooth user experience.
+Online Buy-Sell Platform EHA is a web application designed for buying and selling products online. This platform offers user authentication via email, the ability to add products for sale, and facilitates the purchase of products. The project is built using Spring Boot and integrates several key functionalities to ensure a smooth user experience.
 
 ## Project Description
 
-Online BuySell Platform EHA  is an online marketplace where users can register, list items for sale, and purchase items from other users. The platform supports:
+Online Buy-Sell Platform EHA  is an online marketplace where users can register, list items for sale, and purchase items from other users. The platform supports:
 
 - **User Authentication**: Users can register and log in using their email addresses. Email verification is implemented for security.
 - **Product Management**: Users can add, edit, and delete their products. Each product can include images, descriptions, prices, and categories.
@@ -69,12 +71,9 @@ Ensure you have the following installed on your local machine:
 
 Contributions are welcome! If you have any suggestions or improvements, please fork the repository and create a pull request. For major changes, please open an issue first to discuss what you would like to change.
 
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Your Name - [your.email@example.com](mailto:your.email@example.com)
+Your Name - [emrahhakanagan@gmail.com](mailto:emrahhakanagan@gmail.com)
 
-Project Link: [https://github.com/yourusername/onlinebuysellplatform](https://github.com/yourusername/onlinebuysellplatform)
+Project Link: [Online Buy-Sell Platform EHA](https://github.com/emrahhakanagan/Online_Buy-Sell_Platform_EHA)
