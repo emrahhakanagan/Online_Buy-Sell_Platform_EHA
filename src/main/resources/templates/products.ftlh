@@ -8,10 +8,16 @@
 <H1> BUY-SELL EHA! </H1>
 <hr>
 <H4> Products from all over Germany</H4>
+<form action="/" method="get">
+    Search by product name: <input type="text" name="title"><br>
+    <input type="submit" value="Search">
+</form>
 <#list products as product>
     <div>
         <p><b>${product.title}</b> ${product.price} EUR | <a href="/product/${product.id}">Details...</a></p>
     </div>
+    <#else>
+    <H3>There are no products available at the moment.</H3>
 </#list>
 <hr>
 <H3>Create new product</H3>
