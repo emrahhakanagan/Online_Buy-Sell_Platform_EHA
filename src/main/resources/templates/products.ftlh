@@ -5,7 +5,11 @@
     <title>ONLINE BUY-SELL PLATFORM EHA</title>
 </head>
 <body>
-<H1> BUY-SELL EHA! </H1>
+<H1> BUY-SELL EHA! | <a href="/login">Sign in</a> </H1>
+<form action="/logout" method="post" style="display: inline;">
+    <input type="submit" value="Logout"/>
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+</form>
 <hr>
 <H4> Products from all over Germany</H4>
 <form action="/" method="get">
