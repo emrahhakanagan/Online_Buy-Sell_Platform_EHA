@@ -74,6 +74,6 @@ Contributions are welcome! If you have any suggestions or improvements, please f
 
 ## Contact
 
-Your Name - [emrahhakanagan@gmail.com](mailto:emrahhakanagan@gmail.com)
+Emrah Hakan AGAN - [emrahhakanagan@gmail.com](mailto:emrahhakanagan@gmail.com)
 
 Project Link: [Online Buy-Sell Platform EHA](https://github.com/emrahhakanagan/Online_Buy-Sell_Platform_EHA)
