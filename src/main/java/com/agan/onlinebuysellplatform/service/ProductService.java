@@ -54,7 +54,7 @@ public class ProductService {
                         })
                         .forEach(product::addImageToProduct);
 
-        log.info("Saving new Product. Title: {}; Author: {}", product.getTitle(), product.getAuthor());
+        log.info("Saving new Product. Title: {}; Author email: {}", product.getTitle(), product.getUser().getEmail());
 
         Product productFromDB = productRepository.save(product);
         productFromDB.setPreviewImageId(productFromDB.getImages().get(0).getId());
