@@ -35,7 +35,6 @@
         Description: <input type="text" name="description"/><br><br>
         Price: <input type="number" name="price"/><br><br>
         City: <input type="text" name="city"/><br><br>
-        Author name: <input type="text" name="author"/><br><br>
         1st Image: <input type="file" name="file1"/><br><br>
         2nd Image: <input type="file" name="file2"/><br><br>
         3rd Image: <input type="file" name="file3"/><br><br>

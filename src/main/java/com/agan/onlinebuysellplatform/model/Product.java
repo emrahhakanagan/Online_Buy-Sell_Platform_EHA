@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(schema = "buysell", name = "products")
+@Table(schema = "buyselleha", name = "products")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,22 +19,30 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
     @Column(name = "title")
     private String title;
+
     @Column(name = "description", columnDefinition = "text")
     private String description;
+
     @Column(name = "price")
     private int price;
+
     @Column(name = "city")
     private String city;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,
-    mappedBy = "product")
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
     private List<Image> images = new ArrayList<>();
+
     private Long previewImageId;
+
     private LocalDateTime dateOfCreated;
+
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn
     private User user;
+
     @PrePersist
     private void init() {
         dateOfCreated = LocalDateTime.now();
