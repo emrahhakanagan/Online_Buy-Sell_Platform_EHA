@@ -1,0 +1,55 @@
+[33m057baa5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m added viewpage about user-info
+[33m69576ff[m allowed permision for viewpage about user-info
+[33m9ac14d1[m added new endpoint for viewpage about  user-info
+[33m850ab4d[m[33m ([m[1;31morigin/main[m[33m)[m corrected DB error with tables
+[33mcd393ae[m to UserService, Annotation @Transactional added
+[33m4e1bfa7[m in viewpage Products about auth username some functions changed
+[33m863a318[m unnecessery viewpage Hello deleted
+[33m69c1042[m in viewpage  product-info, func Delete Product removed and Author Username corrected
+[33mddd0425[m Principal for getting username added to ProductController
+[33m39e9160[m in ProductService error with author of Log corrected
+[33m489e8fe[m Field Author deleted, now author is username
+[33md74db86[m search method product  by usernam from auth added
+[33m9027d36[m field and parameters of User added
+[33m6265844[m field and parameters of List Products added
+[33m420527b[m README.md contact name uptaded
+[33mf8e1a20[m UserController added for HTTP request
+[33m473ca96[m SecurityConfig added for app-secur-setup-parameters
+[33mb3efd8f[m CustomUserDetailService added for interface UserDetailsService
+[33ma71e486[m UserRepository added for User operations with DB
+[33m3a87bc3[m UserService added for User operations with User Repository
+[33m9dd424d[m model User and enums added for UserDetails
+[33m972caac[m viewpage Products adapted to security and necessery button added
+[33m6588dfb[m necessery viewpages for security parameters added
+[33mb1c629e[m parameter of CSRF-token for FreeMarker added
+[33m307768f[m Security dependecy reactivated
+[33mee93ea6[m viewpages adapted to Image
+[33m580f788[m Product Cont-Serv-Repo adapted to Image
+[33m8d2e807[m Image Contr-Serv-Repo added
+[33m0283803[m model Product connected with model Image
+[33ma293798[m auto-commit mode turned off
+[33m6b5c7ba[m model Image added
+[33m1d14f43[m ërror about searching product corrected
+[33m41fd64b[m name of schema added
+[33m1a700c6[m future searching of product added
+[33m2ccf226[m Product Service and Controller adapted to JpaRepository
+[33mbf25c33[m ProductRepository added
+[33m9070925[m Product model adapted to entity for DB table
+[33mbc63129[m App-Prop DB parameters added
+[33m91c44f6[m dependencies jpa and postgresqk reactivated
+[33mb4ac883[m product name data entry tag error corrected
+[33m3c6aea2[m Logo uptaded in README.md file
+[33mf6bd1e8[m logo added
+[33mf5e5c84[m parameters of FreeMarker added to App.Prop for FreeMarker to work correctlyr
+[33me9f8d9d[m viewpages with func add-list-details-delete added
+[33m2f0a777[m id added to model Product
+[33mbba3167[m other methods added to ProductController
+[33m59b3066[m other methods added to ProductService
+[33mbb8edd3[m Lombok added
+[33m4f53853[m Product model added
+[33m6274d46[m ProductController created
+[33md0e78b2[m first welcome page addded
+[33me914a98[m some dependencies commited in pom.xml
+[33mf457d59[m README.md uptaded
+[33m313c45d[m README.md added
+[33mca1008c[m initial commit
