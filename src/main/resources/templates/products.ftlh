@@ -20,6 +20,9 @@
     Search by product name: <input type="text" name="title">
     <input type="submit" value="Search">
 </form>
+<#if user.isAdmin()??>
+    <a href="/admin">Administration Panel</a>
+</#if>
 <#list products as product>
     <div>
         <p><b>${product.title}</b> ${product.price} EUR | <a href="/product/${product.id}">Details...</a></p>
