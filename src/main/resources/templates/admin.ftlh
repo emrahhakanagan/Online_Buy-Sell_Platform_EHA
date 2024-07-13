@@ -25,7 +25,7 @@
         <th><#if user.active>true<#else>false</#if></th>
         <th><#list user.roles as role>${role}</#list></th>
         <th>
-            <form action="/admin/ban/${user.id}" method="post">
+            <form action="/admin/user/ban/${user.id}" method="post">
                 <input type="hidden" name="_csrf" value="${_csrf.token}">
                 <input type="submit" name="Ban" value="Ban">
             </form>
