@@ -43,8 +43,13 @@ public class UserService {
         User user = userRepository.findById(id).orElse(null);
 
         if (user != null) {
-            user.setActive(false);
-            log.info("Ban user with id = {}; email: {}", user.getId(), user.getEmail());
+            if (user.isActive()) {
+                user.setActive(false);
+                log.info("Ban user with id = {}; email: {}", user.getId(), user.getEmail());
+            } else {
+                user.setActive(true);
+                log.info("Unban user with id = {}; email: {}", user.getId(), user.getEmail());
+            }
 
             userRepository.save(user);
         }
