@@ -22,12 +22,16 @@
     <tr>
         <th>${user.email}</th>
         <th>${user.phoneNumber}</th>
-        <th><#if user.active>true<#else>false</#if></th>
+        <th>${user.active?string('true', 'false')}</th>
         <th><#list user.roles as role>${role}</#list></th>
         <th>
             <form action="/admin/user/ban/${user.id}" method="post">
                 <input type="hidden" name="_csrf" value="${_csrf.token}">
-                <input type="submit" name="Ban" value="Ban">
+                <#if user.active>
+                    <input type="submit" name="Ban" value="Ban">
+                <#else>
+                    <input type="submit" name="Ban" value="Unban">
+                </#if>
             </form>
         </th>
         <th><a href="/admin/user/edit/${user.id}">Edit</a></th>
