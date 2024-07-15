@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <img src="/images/logo.jpg" alt="Logo" style="width:100px;height:auto;">
+    <img src="/static/images/logo.jpg" alt="Logo" style="width:100px;height:auto;">
     <title>ONLINE BUY-SELL PLATFORM EHA</title>
 </head>
 <body>
