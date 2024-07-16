@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.IIOException;
 import java.io.IOException;
 import java.security.Principal;
 
@@ -21,13 +20,13 @@ import java.security.Principal;
 public class ProductController {
 
     private final ProductService productService;
-    private final ServerProperties serverProperties;
 
     @GetMapping("/")
-    public String products(@RequestParam(name = "title", required = false) String title,
+    public String products(@RequestParam(name = "searchWord", required = false) String title,
                            Principal principal, Model model) {
         model.addAttribute("products", productService.listProducts(title));
         model.addAttribute("user", productService.getUserByPrincipal(principal));
+        model.addAttribute("searchWord", title);
 
         return "products";
     }
