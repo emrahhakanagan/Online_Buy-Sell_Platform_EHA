@@ -1,5 +1,5 @@
 <#import "blocks/template.ftlh" as t>
-<t.template user>
+<@t.template user>
     <h1 style="...">Search Products</h1><hr>
     <form method="get" action="">
         <div class="form-row">
@@ -14,7 +14,7 @@
             </div>
             <div class="form-group col-md-10">
                 <label for="searchWord">Search Product</label>
-                <input type="text" name="searchWord"  <#if searchWord>value="${searchWord}"</#if> class="form-control" id="searchWord">
+                <input type="text" name="searchWord"  <#if searchWord??>value="${searchWord}"</#if> class="form-control" id="searchWord">
             </div>
         </div>
         <button style="..." type="submit" class="btn btn-dark">Find</button>
@@ -37,4 +37,4 @@
         </#list>
         <h1 style="...">Not found</h1>
     </div>
-</t.template>
+</@t.template>
