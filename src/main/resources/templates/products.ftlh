@@ -1,6 +1,10 @@
 <#import "blocks/template.ftlh" as t>
 <@t.template user>
+<<<<<<< HEAD
     <h1>Search Products</h1><hr>
+=======
+    <h1 style="...">Search Products</h1><hr>
+>>>>>>> fbe0ea33b46b13658bb90b468d8d8a97d4728094
     <form method="get" action="">
         <div class="form-row">
             <div class="form-group col-md-2">

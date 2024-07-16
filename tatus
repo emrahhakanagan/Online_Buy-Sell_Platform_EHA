@@ -1,0 +1,85 @@
+[33m896e212[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m corrected some syntax errors
+[33m6f6c156[m uptaded viewpages Products and Product-Info for css style
+[33mfbe0ea3[m[33m ([m[1;31morigin/main[m[33m)[m uptaded viewpages Products and Product-Info for css style
+[33m6055d29[m uptaded viewpage Products, ProductController for Product Search and viewpage Products adapted to css style
+[33m468a068[m adapted viewpage Admin to file template style
+[33mc6e85bb[m added parameters max file size and Request Attributes
+[33m6584fa9[m added default avatar
+[33m95d1165[m added template for page layout with Bootstrap and jQuery integration
+[33m2af1118[m corrected error of display logo in viewpages
+[33mff62c6a[m added css directory for css style in project
+[33mfbbc7f6[m allowed security parameter for static directory - static in SecurityConfig
+[33m45ae880[m added MvcConfig class for static files as css, js and images
+[33m3c00f07[m made better syntax if-else and changed button activity Ban-Unban logically
+[33mdc2737d[m SecurityConfig uptaded
+[33mf8655e9[m added method Role changing to UserService
+[33m849b1f1[m added methods User edit to AdminController
+[33m5cbdecc[m added new viewpage user-edit for admin
+[33m5ffa80d[m corrected Ban button
+[33m3e752ff[m returned default status role USER during the saving of a new user
+[33me5a1b59[m corrected errors and uptaded viewpage Admin
+[33made43ef[m uptaded Ban Method in User Service
+[33m878a695[m added to viewpage Productslink for Administrator Panel if user is admin
+[33mefb58d8[m added authority control by Role to AdminController
+[33m727381b[m added checking User is Admin or not
+[33m54cd163[m uptaded SecurityConfig
+[33m7633ed7[m uptaded SecurityConfig
+[33mce196f6[m uptaded log.info for field username email
+[33mbe9c6e7[m uptaded viewpage user-info
+[33m20fbb98[m added AdminController
+[33mde6f8ed[m added viewpage admin
+[33m4718a41[m added viewpage about user-info
+[33m69576ff[m allowed permision for viewpage about user-info
+[33m9ac14d1[m added new endpoint for viewpage about  user-info
+[33m850ab4d[m corrected DB error with tables
+[33mcd393ae[m to UserService, Annotation @Transactional added
+[33m4e1bfa7[m in viewpage Products about auth username some functions changed
+[33m863a318[m unnecessery viewpage Hello deleted
+[33m69c1042[m in viewpage  product-info, func Delete Product removed and Author Username corrected
+[33mddd0425[m Principal for getting username added to ProductController
+[33m39e9160[m in ProductService error with author of Log corrected
+[33m489e8fe[m Field Author deleted, now author is username
+[33md74db86[m search method product  by usernam from auth added
+[33m9027d36[m field and parameters of User added
+[33m6265844[m field and parameters of List Products added
+[33m420527b[m README.md contact name uptaded
+[33mf8e1a20[m UserController added for HTTP request
+[33m473ca96[m SecurityConfig added for app-secur-setup-parameters
+[33mb3efd8f[m CustomUserDetailService added for interface UserDetailsService
+[33ma71e486[m UserRepository added for User operations with DB
+[33m3a87bc3[m UserService added for User operations with User Repository
+[33m9dd424d[m model User and enums added for UserDetails
+[33m972caac[m viewpage Products adapted to security and necessery button added
+[33m6588dfb[m necessery viewpages for security parameters added
+[33mb1c629e[m parameter of CSRF-token for FreeMarker added
+[33m307768f[m Security dependecy reactivated
+[33mee93ea6[m viewpages adapted to Image
+[33m580f788[m Product Cont-Serv-Repo adapted to Image
+[33m8d2e807[m Image Contr-Serv-Repo added
+[33m0283803[m model Product connected with model Image
+[33ma293798[m auto-commit mode turned off
+[33m6b5c7ba[m model Image added
+[33m1d14f43[m ërror about searching product corrected
+[33m41fd64b[m name of schema added
+[33m1a700c6[m future searching of product added
+[33m2ccf226[m Product Service and Controller adapted to JpaRepository
+[33mbf25c33[m ProductRepository added
+[33m9070925[m Product model adapted to entity for DB table
+[33mbc63129[m App-Prop DB parameters added
+[33m91c44f6[m dependencies jpa and postgresqk reactivated
+[33mb4ac883[m product name data entry tag error corrected
+[33m3c6aea2[m Logo uptaded in README.md file
+[33mf6bd1e8[m logo added
+[33mf5e5c84[m parameters of FreeMarker added to App.Prop for FreeMarker to work correctlyr
+[33me9f8d9d[m viewpages with func add-list-details-delete added
+[33m2f0a777[m id added to model Product
+[33mbba3167[m other methods added to ProductController
+[33m59b3066[m other methods added to ProductService
+[33mbb8edd3[m Lombok added
+[33m4f53853[m Product model added
+[33m6274d46[m ProductController created
+[33md0e78b2[m first welcome page addded
+[33me914a98[m some dependencies commited in pom.xml
+[33mf457d59[m README.md uptaded
+[33m313c45d[m README.md added
+[33mca1008c[m initial commit
