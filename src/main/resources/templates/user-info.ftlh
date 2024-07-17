@@ -1,24 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <img src="/static/images/logo.jpg" alt="Logo" style="width:100px;height:auto;">
-    <title>ONLINE BUY-SELL PLATFORM EHA</title>
-</head>
-<body>
-<H1> BUY-SELL EHA! </H1>
-<H3>More detailed information about user ${user.name}</H3>
-<b>Phone Number: </b> ${user.phoneNumber}<br>
-<b>Email: </b> ${user.email}<br>
-<h4>Products of User ${user.name}</h4>
-<#list products as product>
+<#import "blocks/template.ftlh" as t>
+<@t.template user>
+    <h1 style="font-size: 2rem;">Information about User</h1>
+    <hr>
     <div>
-        <p><b>${product.title}</b> ${product.price} EUR | <a href="/product/${product.id}">Details...</a></p>
+        <img src="/static/images/avatar.png" style="height: 120px" alt="User Avatar">
+        <br>
+        <br>
+        <h2>${user.name}</h2>
+        <br>
+        Phone Number: <b>${user.phoneNumber}</b>
     </div>
-<#else>
-    <H3>There are no products available at the moment.</H3>
-</#list>
-<#if errorMessage??>
-    <H2 style="color: red">@{errorMessage}</H2>
-</#if>
-</body>
-</html>
+    <br>
+    <hr>
+    <h1>Products of User ${user.name}</h1>
+    <br>
+    <div class="card-columns">
+        <#list products as product>
+            <a href="/product/${product.id}" class="product-link">
+                <div class="card text-white bg-dark my-3 product">
+                    <img src="/images/${product.previewImageId}" class="card-img-top" alt="Product Image">
+                    <div class="card-body">
+                        <h5 class="card-title">${product.title}</h5>
+                        <p class="card-text">${product.price} ₽</p>
+                    </div>
+                    <div class="card-footer">
+                        ${product.user.name}
+                    </div>
+                </div>
+            </a>
+        <#else>
+        <h1>Not Found</h1>
+        </#list>
+    </div>
+</@t.template>

@@ -1,11 +1,7 @@
 <#import "blocks/template.ftlh" as t>
 <@t.template user>
-<<<<<<< HEAD
-    <h1>Search Products</h1><hr>
-=======
-    <h1 style="...">Search Products</h1><hr>
->>>>>>> fbe0ea33b46b13658bb90b468d8d8a97d4728094
-    <form method="get" action="">
+    <h1 style="font-size: 1.25rem;">Search Products</h1><hr>
+    <form method="get" action="/">
         <div class="form-row">
             <div class="form-group col-md-2">
                 <label for="searchCity">City</label>
@@ -18,10 +14,12 @@
             </div>
             <div class="form-group col-md-10">
                 <label for="searchWord">Search Product</label>
-                <input type="text" name="searchWord"  <#if searchWord??>value="${searchWord}"</#if> class="form-control" id="searchWord">
+                <input type="text" name="searchWord"  <#if searchWord??>value="${searchWord}"</#if> class="form-control"
+                       id="searchWord">
             </div>
+
+            <button type="submit" class="btn btn-dark">Find</button>
         </div>
-        <button type="submit" class="btn btn-dark">Find</button>
     </form>
     <hr>
     <div class="card-columns">
@@ -31,14 +29,15 @@
                     <img src="/images/${product.previewImageId}" class="card-img-top" alt="">
                     <div class="card-body">
                         <h5 class="card-title">${product.title}</h5>
-                        <p class="card-text">${product.price} ₽</p>https://www.youtube.com/watch?v=XtpgeFI08os
+                        <p class="card-text">${product.price} ₽</p>
                     </div>
                     <div class="card-footer">
                         ${product.city}
                     </div>
                 </div>
             </a>
+        <#else>
+            <h1>Not found</h1>
         </#list>
-        <h1>Not found</h1>
     </div>
 </@t.template>

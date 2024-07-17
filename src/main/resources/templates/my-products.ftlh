@@ -1,8 +1,8 @@
 <#import "blocks/template.ftlh" as t>
 <@t.template user>
-    <h1 style="..." xmlns="http://www.w3.org/1999/html">My Products</h1>
+    <h1>My Products</h1>
     <hr>
-    <a class="btn-dark mt-3 mb-3" style="..." data-toggle="collapse" href="#collapseExample" role="button"
+    <a class="btn-dark mt-3 mb-3" data-toggle="collapse" href="#collapseExample" role="button"
        aria-expanded="true" aria-controls="collapseExample">
         Add new product
     </a>
@@ -32,7 +32,7 @@
             </div>
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea required class="form-control" id="description" name="dexcription"></textarea>
+                <textarea required class="form-control" id="description" name="description"></textarea>
             </div>
             <div class="form-group">
                 <div class="custom-file">
@@ -55,7 +55,7 @@
 
             <input type="hidden" name="_csrf" value="${_csrf.token}"/>
 
-            <button type="button" style="..." class="btn btn-dark">Add</button>
+            <button type="button" class="btn btn-dark">Add</button>
         </form>
     </div>
     <div class="card-columns">
@@ -79,7 +79,7 @@
                 </div>
             </a>
         <#else>
-            <h1 style="...">Not Found</h1>
+            <h1>Not Found</h1>
         </#list>
     </div>
 </@t.template>

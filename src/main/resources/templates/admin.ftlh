@@ -1,15 +1,15 @@
 <#import "blocks/template.ftlh" as t>
 <@t.template user>
-    <H4>Administrator Panel</H4>
-    <table border="1">
+    <h1>Administrator Panel</h1>
+    <table class="table table-hover table-dark">
         <tr>
-            <th>Email</th>
-            <th>Phone number</th>
-            <th>Activity</th>
-            <th>Roles</th>
-            <th>Ban</th>
-            <th>Edit</th>
-            <th>Detailed Information</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone number</th>
+            <th scope="col">Activity</th>
+            <th scope="col">Roles</th>
+            <th scope="col">Ban</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Detailed Information</th>
         </tr>
         <#list users as user>
         <tr>
