@@ -8,7 +8,9 @@
         <link rel="stylesheet" href="/static/css/style.css">
 
         <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-o2zRBfKNquMkCBs9lM5+3HYy3N97DRJlkqS0hZKfpqR+m5HRA5Ck9x2fPQ+Bb6U6" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+              integrity="sha384-o2zRBfKNquMkCBs9lM5+3HYy3N97DRJlkqS0hZKfpqR+m5HRA5Ck9x2fPQ+Bb6U6"
+              crossorigin="anonymous">
         <img src="/static/images/logo.jpg" alt="Logo" style="width:100px;height:auto;">
         <title>ONLINE BUY-SELL PLATFORM EHA</title>
     </head>
