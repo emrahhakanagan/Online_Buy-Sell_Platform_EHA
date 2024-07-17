@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,12 @@ public class UserService {
         userRepository.save(user);
 
         return true;
+    }
+
+    public User getUserByPrincipal(Principal principal) {
+        if (principal == null) return new User();
+
+        return userRepository.findByEmail(principal.getName());
     }
 
     @Transactional
