@@ -68,6 +68,10 @@ public class ProductService {
         return userRepository.findByEmail(principal.getName());
     }
 
+    public List<Product> getProductsByUser(User user) {
+        return productRepository.findAllByUser(user);
+    }
+
     private Image toImageEntity(MultipartFile file) throws IOException {
         Image image = new Image();
         image.setName(file.getName());

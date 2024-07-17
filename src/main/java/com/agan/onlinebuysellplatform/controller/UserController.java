@@ -1,6 +1,7 @@
 package com.agan.onlinebuysellplatform.controller;
 
 import com.agan.onlinebuysellplatform.model.User;
+import com.agan.onlinebuysellplatform.service.ProductService;
 import com.agan.onlinebuysellplatform.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.Banner;
@@ -16,6 +17,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final ProductService productService;
 
     @GetMapping("/login")
     public String login(Principal principal, Model model) {
@@ -29,8 +31,9 @@ public class UserController {
         User user = userService.getUserByPrincipal(principal);
 
         model.addAttribute("user", user);
+        model.addAttribute("products", productService.getProductsByUser(user));
 
-        return "profile";
+        return "user-info";
     }
 
     @GetMapping("/registration")
