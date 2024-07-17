@@ -1,0 +1,85 @@
+<#import "blocks/template.ftlh" as t>
+<@t.template user>
+    <h1 style="..." xmlns="http://www.w3.org/1999/html">My Products</h1>
+    <hr>
+    <a class="btn-dark mt-3 mb-3" style="..." data-toggle="collapse" href="#collapseExample" role="button"
+       aria-expanded="true" aria-controls="collapseExample">
+        Add new product
+    </a>
+    <div class="collapse mb-3" id="collapseExample" style="">
+        <form action="/product/create" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="productName">Product Name</label>
+                <input type="text" required class="form-control" id="productName" name="title">
+            </div>
+            <div class="form-group">
+                <label for="price">Price</label>
+                <div class="input-group mb-3">
+                    <input type="number" required class="form-control" id="price" name="price">
+                    <div class="input-group-append">
+                        <span class="input-group-text">₽</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="searchCity">City</label>
+                <select id="searchCity" required name="city" class="form-control">
+                    <option value="">City is not selected</option>
+                    <option value="Berlin">Berlin</option>
+                    <option value="Dusseldorf">Dusseldorf</option>
+                    <option value="Frankfurt">Frankfurt</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea required class="form-control" id="description" name="dexcription"></textarea>
+            </div>
+            <div class="form-group">
+                <div class="custom-file">
+                    <input required type="file" name="file1" id="file1">
+                    <label class="custom-file-label" for="file1">1st Photo</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="custom-file">
+                    <input required type="file" name="file2" id="file2">
+                    <label class="custom-file-label" for="file2">2nd Photo</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="custom-file">
+                    <input required type="file" name="file3" id="file3">
+                    <label class="custom-file-label" for="file3">3rd Photo</label>
+                </div>
+            </div>
+
+            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+
+            <button type="button" style="..." class="btn btn-dark">Add</button>
+        </form>
+    </div>
+    <div class="card-columns">
+        <#list products as product>
+            <a href="product/${product.id}" class="product-link">
+                <div class="card text-white bg-dark my-3 product">
+                    <div class="card-top">
+                        <form action="product/delete/${product.id}" method="post">
+                            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+                            <button type="submit" class="btn btn-danger m-3">Delete</button>
+                        </form>
+                    </div>
+                    <img src="/images/${product.previewImageId}" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">${product.title}</h5>
+                        <p class="card-text">${product.price} ₽</p>
+                    </div>
+                    <div class="card-footer">
+                        ${product.city}
+                    </div>
+                </div>
+            </a>
+        <#else>
+            <h1 style="...">Not Found</h1>
+        </#list>
+    </div>
+</@t.template>
