@@ -1,30 +1,29 @@
 <#import "blocks/template.ftlh" as t>
 <t.template user>
     <div id="myCarousel" class="carousel slide" data-ride="carousel">
-        <div class="carousel-indicators">
+        <ol class="carousel-indicators">
             <#list images as image>
-                <li data-target="#myCarousel" data-slide-to="0" class=""></li>
+                <li data-target="#myCarousel" data-slide-to="${image.id}" class="<#if image.previewImage>active</#if>"></li>
             </#list>
-        </div>
+        </ol>
         <div class="carousel-inner">
             <#list images as image>
                 <div class="carousel-item <#if image.previewImage>active</#if>">
                     <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"
-                         role="img" aria-label="..." preserveAspectRatio="xMidYMid slice" focusable="false">
-                        <title>...</title>
-                        <rect width="100%" height="100%" fill="#777"/>
-                        <text x="50%" y="50%" fill="#777" dy=".3em">...</text>
+                         role="img" aria-label="Placeholder: Image" preserveAspectRatio="xMidYMid slice" focusable="false">
+                        <title>Placeholder</title>
+                        <rect width="100%" height="100%" fill="#777"></rect>
+                        <text x="50%" y="50%" fill="#fff" dy=".3em">Image</text>
                     </svg>
                     <div class="container">
                         <div class="carousel-caption">
                             <a href="/images/${image.id}">
-                                <img class="product" style="..." src="/images/${image.id}">
+                                <img class="product" style="width: 100%;" src="/images/${image.id}">
                             </a>
                         </div>
                     </div>
                 </div>
             </#list>
-
         </div>
         <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -36,14 +35,13 @@
         </a>
     </div>
     <hr>
-    <p><h1 style="...">${product.title} | ${product.price} ₽<</h1></p>
-    <p style="...">${product.description}</p>
-    <p style=...">Phone Number of Seller: <b>${authorProduct.phoneNumber}</b></p>
+    <h1 style="font-size: 2rem;">${product.title} | ${product.price} ₽</h1>
+    <p style="font-size: 1.25rem;">${product.description}</p>
+    <p style="font-size: 1.25rem;">Phone Number of Seller: <b>${authorProduct.phoneNumber}</b></p>
     <hr>
-
-    <p style="...">
+    <p style="font-size: 1.25rem;">
         <a href="/user/${authorProduct.id}">
-            <img src="/static/images/avatar.png" alt="mdo" width="32" height="32" class="rounded-circle">${authorProduct.name}
+            <img src="/static/images/avatar.png" alt="User Avatar" width="32" height="32" class="rounded-circle">${authorProduct.name}
         </a>
     </p>
 </t.template>
