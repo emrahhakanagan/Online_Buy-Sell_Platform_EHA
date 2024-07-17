@@ -2,6 +2,7 @@ package com.agan.onlinebuysellplatform.controller;
 
 import com.agan.onlinebuysellplatform.model.Product;
 import com.agan.onlinebuysellplatform.service.ProductService;
+import com.agan.onlinebuysellplatform.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import java.security.Principal;
 public class ProductController {
 
     private final ProductService productService;
+    private final UserService userService;
 
     @GetMapping("/")
     public String products(@RequestParam(name = "searchWord", required = false) String title,
@@ -33,11 +35,13 @@ public class ProductController {
 
 
     @GetMapping("/product/{id}")
-    public String productInfo(@PathVariable Long id, Model model) {
+    public String productInfo(@PathVariable Long id, Model model, Principal principal) {
         Product product = productService.getProductById(id);
 
+        model.addAttribute("user", productService.getUserByPrincipal(principal));
         model.addAttribute("product", product);
         model.addAttribute("images", product.getImages());
+        model.addAttribute("authorProduct", product.getUser());
 
         return "product-info";
     }
