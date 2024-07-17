@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/migrations/schema.yaml
+  - include:
+      file: db/changelog/migrations/users.yaml
+  - include:
+      file: db/changelog/migrations/products.yaml
+  - include:
+      file: db/changelog/migrations/images.yaml

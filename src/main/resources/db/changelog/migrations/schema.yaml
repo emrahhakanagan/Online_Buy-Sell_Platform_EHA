@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Emrah Hakan AGAN
+      changes:
+        - createSchema:
+            schemaName: buyselleha
