@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: Emrah Hakan Agan
+      changes:
+        - sql:
+            sql: |
+              CREATE TABLE IF NOT EXISTS buyselleha.user_role (
+                user_id BIGINT NOT NULL,
+                role VARCHAR(255) NOT NULL,
+                CONSTRAINT fk_user_role FOREIGN KEY (user_id) REFERENCES buyselleha.users(id)
+              );
