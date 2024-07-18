@@ -1,7 +1,14 @@
 databaseChangeLog:
   - changeSet:
       id: 1
-      author: Emrah Hakan AGAN
+      author: Emrah Hakan Agan
       changes:
-        - createSchema:
-            schemaName: buyselleha
+        - sql:
+            sql: |
+              DO '
+              BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = ''buyselleha'') THEN
+                   CREATE SCHEMA buyselleha;
+                END IF;
+              END
+              ';
