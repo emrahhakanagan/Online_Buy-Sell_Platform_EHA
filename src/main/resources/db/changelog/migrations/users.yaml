@@ -13,6 +13,5 @@ databaseChangeLog:
                 active BOOLEAN,
                 image_id BIGINT,
                 password VARCHAR(1000),
-                date_of_created TIMESTAMP,
-                roles VARCHAR(255)
+                date_of_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
               );

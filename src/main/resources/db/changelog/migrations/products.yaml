@@ -11,8 +11,8 @@ databaseChangeLog:
                 description TEXT,
                 price INT,
                 city VARCHAR(255),
-                previewImageId BIGINT,
-                dateOfCreated TIMESTAMP,
+                preview_image_id BIGINT,
+                date_of_created TIMESTAMP,
                 user_id BIGINT,
                 FOREIGN KEY (user_id) REFERENCES buyselleha.users(id)
               );

@@ -12,45 +12,29 @@ import java.util.List;
 @Entity
 @Table(schema = "buyselleha", name = "products")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-
-    @Column(name = "title")
     private String title;
-
-    @Column(name = "description", columnDefinition = "text")
     private String description;
-
-    @Column(name = "price")
-    private int price;
-
-    @Column(name = "city")
+    private Integer price;
     private String city;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,
+            mappedBy = "product")
     private List<Image> images = new ArrayList<>();
-
-    private Long previewImageId;
-
-    private LocalDateTime dateOfCreated;
-
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn
     private User user;
+    private Long previewImageId;
+    private LocalDateTime dateOfCreated;
 
     @PrePersist
-    private void init() {
-        dateOfCreated = LocalDateTime.now();
-    }
+    private void onCreate() { dateOfCreated = LocalDateTime.now(); }
+
 
     public void addImageToProduct(Image image) {
         image.setProduct(this);
         images.add(image);
     }
-
 }

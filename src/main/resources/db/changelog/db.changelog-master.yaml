@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/migrations/products.yaml
   - include:
       file: db/changelog/migrations/images.yaml
+  - include:
+      file: db/changelog/migrations/user_role.yaml

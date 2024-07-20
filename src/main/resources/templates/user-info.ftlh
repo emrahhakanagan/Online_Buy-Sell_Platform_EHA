@@ -1,24 +1,27 @@
 <#import "blocks/template.ftlh" as t>
-<@t.template user>
-    <h1 style="font-size: 2rem;">Information about User</h1>
+<@t.template userByPrincipal>
+    <h1 style="text-align: center">Информация о пользователе</h1>
     <hr>
-    <div>
-        <img src="/static/images/avatar.png" style="height: 120px" alt="User Avatar">
+    <div style="text-align: center">
+        <img src="/static/images/avatar.png"
+             style="border:2px solid black; border-radius: 20px" height="120">
         <br>
         <br>
         <h2>${user.name}</h2>
         <br>
-        Phone Number: <b>${user.phoneNumber}</b>
+        Номер телефона: <b>${user.phoneNumber}</b>
     </div>
     <br>
     <hr>
-    <h1>Products of User ${user.name}</h1>
+    <h1 style="text-align: center">Товары пользователя ${user.name}</h1>
     <br>
     <div class="card-columns">
         <#list products as product>
             <a href="/product/${product.id}" class="product-link">
                 <div class="card text-white bg-dark my-3 product">
-                    <img src="/images/${product.previewImageId}" class="card-img-top" alt="Product Image">
+
+                    <img src="/images/${product.previewImageId}"
+                         class="card-img-top">
                     <div class="card-body">
                         <h5 class="card-title">${product.title}</h5>
                         <p class="card-text">${product.price} ₽</p>
@@ -29,7 +32,7 @@
                 </div>
             </a>
         <#else>
-        <h1>Not Found</h1>
+            <h1 style="text-align: center">Не найдено</h1>
         </#list>
     </div>
 </@t.template>

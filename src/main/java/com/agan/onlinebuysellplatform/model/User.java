@@ -21,7 +21,7 @@ public class User implements UserDetails {
     @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "phone_number")
+    @Column(name = "phone_n umber")
     private String phoneNumber;
 
     @Column(name = "name")
@@ -48,6 +48,7 @@ public class User implements UserDetails {
     @Column(name = "date_of_created")
     private LocalDateTime dateOfCreated;
 
+    @PrePersist
     private void init() {
         dateOfCreated = LocalDateTime.now();
     }
