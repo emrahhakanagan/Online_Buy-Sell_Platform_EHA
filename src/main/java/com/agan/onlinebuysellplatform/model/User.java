@@ -18,10 +18,10 @@ public class User implements UserDetails {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email", unique = true, updatable = false)
     private String email;
 
-    @Column(name = "phone_n umber")
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @Column(name = "name")
@@ -37,6 +37,9 @@ public class User implements UserDetails {
     @Column(name = "password", length = 1000)
     private String password;
 
+    @Column(name = "date_of_created")
+    private LocalDateTime dateOfCreated;
+
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
@@ -45,8 +48,6 @@ public class User implements UserDetails {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     private List<Product> products = new ArrayList<>();
 
-    @Column(name = "date_of_created")
-    private LocalDateTime dateOfCreated;
 
     @PrePersist
     private void init() {
