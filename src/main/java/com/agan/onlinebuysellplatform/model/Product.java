@@ -1,9 +1,7 @@
 package com.agan.onlinebuysellplatform.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,22 +13,39 @@ import java.util.List;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "title")
     private String title;
+
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "price")
     private Integer price;
+
+    @Column(name = "city")
     private String city;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,
             mappedBy = "product")
     private List<Image> images = new ArrayList<>();
+
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn
     private User user;
+
+    @Column(name = "preview_image_id")
     private Long previewImageId;
+
+    @Column(name = "date_of_created")
     private LocalDateTime dateOfCreated;
 
     @PrePersist
-    private void onCreate() { dateOfCreated = LocalDateTime.now(); }
+    private void onCreate() {
+        dateOfCreated = LocalDateTime.now();
+    }
 
 
     public void addImageToProduct(Image image) {
