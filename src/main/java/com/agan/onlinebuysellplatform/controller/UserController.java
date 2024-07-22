@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 
@@ -19,8 +20,25 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/login")
-    public String login(Principal principal, Model model) {
-        model.addAttribute("user", userService.getUserByPrincipal(principal));
+    public String login(@RequestParam(value = "error", required = false) String error,
+                        @RequestParam(value = "logout", required = false) String logout,
+                        Principal principal,
+                        Model model) {
+
+        if (principal != null) {
+            model.addAttribute("user", userService.getUserByPrincipal(principal));
+        } else {
+            model.addAttribute("user", null);
+        }
+
+        if (error != null) {
+            model.addAttribute("error", "Invalid email or password");
+        }
+
+        if (logout != null) {
+            model.addAttribute("message", "You have been logged out successfully");
+        }
+
         return "login";
     }
 
