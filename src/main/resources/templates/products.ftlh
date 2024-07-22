@@ -1,23 +1,23 @@
 <#import "blocks/template.ftlh" as t>
 <@t.template user>
-    <h1 style="text-align: center">Поиск товаров</h1><hr>
+    <h1 style="text-align: center">Search Product</h1><hr>
     <form method="get" action="/">
         <div class="form-row">
             <div class="form-group col-md-2">
-                <label for="searchCity">Город</label>
+                <label for="searchCity">City</label>
                 <select id="searchCity" class="form-control">
-                    <option value="">Город не выбран</option>
-                    <option value="Москва">Москва</option>
-                    <option value="Красноярск">Красноярск</option>
-                    <option value="Казань">Казань</option>
+                    <option value="">The city is not selected</option>
+                    <option value="Berlin">Berlin</option>
+                    <option value="Köln">Köln</option>
+                    <option value="Düsseldorf">Düsseldorf</option>
                 </select>
             </div>
             <div class="form-group col-md-10">
-                <label for="searchWord">Поиск по объявлениям</label>
+                <label for="searchWord">Search by ads</label>
                 <input type="text" name="searchWord" <#if searchWord??>value="${searchWord}"</#if> class="form-control"
                        id="searchWord">
             </div>
-            <button style="width: 100%" type="submit" class="btn btn-dark">Поиск</button>
+            <button style="width: 100%" type="submit" class="btn btn-dark">Search</button>
         </div>
     </form>
     <hr>
@@ -38,7 +38,7 @@
                 </div>
             </a>
         <#else>
-            <h1 style="text-align: center">Не найдено</h1>
+            <h1 style="text-align: center">Not found</h1>
         </#list>
     </div>
 </@t.template>
