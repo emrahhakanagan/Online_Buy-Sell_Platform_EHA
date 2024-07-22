@@ -1,6 +1,6 @@
 <#import "blocks/template.ftlh" as t>
 <@t.template user>
-    <h1 style="text-align: center">Личный кабинет</h1>
+    <h1 style="text-align: center">User Account</h1>
     <hr>
     <br>
     <div style="text-align: center">
@@ -10,25 +10,25 @@
         <br>
         <h2>${user.name}</h2>
         <br>
-        Электоронная почта: <b>${user.email}</b>
+        Email: <b>${user.email}</b>
         <br>
-        Номер телефона: <b>${user.phoneNumber}</b>
+        Phone Number: <b>${user.phoneNumber}</b>
         <br>
         <br>
         <#if user.isAdmin()>
             <a class="btn btn-dark mb-3" style="text-align: center; width: 100%"
                href="/admin">
-                Панель администратора
+                Admin Panel
             </a><br>
         </#if>
         <a class="btn btn-dark mb-3" style="text-align: center; width: 100%"
            href="/my/products">
-            Мои товары
+            My Products
         </a>
         <form action="/logout" method="post">
             <input type="hidden" name="_csrf" value="${_csrf.token}"/>
             <button type="submit" style="text-align: center; width: 100%" class="btn btn-danger mb-2">
-                Выйти из аккаунта
+                Log out
             </button>
         </form>
     </div>
