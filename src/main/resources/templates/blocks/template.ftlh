@@ -30,7 +30,7 @@
             <#else>
                 <button class="btn btn-light my-2 my-sm-0" type="button"
                         onclick="window.location.href = '/login'">
-                    Войти
+                    Sign in
                 </button>
             </#if>
         </div>
