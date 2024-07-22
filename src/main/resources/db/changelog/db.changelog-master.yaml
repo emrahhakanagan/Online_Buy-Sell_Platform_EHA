@@ -8,4 +8,4 @@ databaseChangeLog:
   - include:
       file: db/changelog/migrations/images.yaml
   - include:
-      file: db/changelog/migrations/user_role.yaml
+      file: db/changelog/migrations/user_roles.yaml
