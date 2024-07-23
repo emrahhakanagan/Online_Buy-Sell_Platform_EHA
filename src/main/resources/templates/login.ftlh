@@ -1,6 +1,6 @@
 <#import "blocks/template.ftlh" as t>
 <@t.template user=user!>
-    <h1 style="text-align: center">Authorisation</h1>
+    <h1 style="text-align: center">Authorization</h1>
     <hr>
     <form action="/login" method="post">
         <div class="form-group">
