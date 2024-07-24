@@ -4,6 +4,7 @@ import com.agan.onlinebuysellplatform.model.Image;
 import com.agan.onlinebuysellplatform.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +23,18 @@ public class ImageController {
 
     @GetMapping("/images/{id}")
     @Transactional(readOnly = true)
-    protected ResponseEntity<?> getImageById(@PathVariable Long id) {
-        Image image = imageService.getImageById(id);
+    public ResponseEntity<?> getImageById(@PathVariable Long id) {
+        try {
+            Image image = imageService.getImageById(id);
 
-        return ResponseEntity.ok()
-                .header("fileName", image.getOriginalFileName())
-                .contentType(MediaType.valueOf(image.getContentType()))
-                .contentLength(image.getSize())
-                .body(new InputStreamResource(new ByteArrayInputStream(image.getBytes())));
+            return ResponseEntity.ok()
+                    .header("filename", image.getOriginalFileName())
+                    .contentType(MediaType.valueOf(image.getContentType()))
+                    .contentLength(image.getSize())
+                    .body(new InputStreamResource(new ByteArrayInputStream(image.getBytes())));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Image not found");
+        }
     }
+
 }
