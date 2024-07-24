@@ -14,6 +14,7 @@ public class ImageService {
 
     @Transactional(readOnly = true)
     public Image getImageById(Long id) {
-        return imageRepository.findById(id).orElse(null);
+        return imageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Image not found"));
     }
 }
