@@ -12,7 +12,7 @@ databaseChangeLog:
                 size BIGINT,
                 content_type VARCHAR(255),
                 is_preview_image BOOLEAN,
-                bytes BYTEA,
+                bytes OID,
                 product_id BIGINT,
                 FOREIGN KEY (product_id) REFERENCES buyselleha.products(id)
               );
