@@ -1,10 +1,8 @@
 package com.agan.onlinebuysellplatform.controller;
 
 import com.agan.onlinebuysellplatform.model.User;
-import com.agan.onlinebuysellplatform.service.ProductService;
 import com.agan.onlinebuysellplatform.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
