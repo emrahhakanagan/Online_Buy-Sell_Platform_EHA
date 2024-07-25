@@ -1,6 +1,6 @@
 <#import "blocks/template.ftlh" as t>
 <@t.template userByPrincipal>
-    <h1 style="text-align: center">Информация о пользователе</h1>
+    <h1 style="text-align: center">Information about User</h1>
     <hr>
     <div style="text-align: center">
         <img src="/static/images/avatar.png"
@@ -9,11 +9,11 @@
         <br>
         <h2>${user.name}</h2>
         <br>
-        Номер телефона: <b>${user.phoneNumber}</b>
+        Phone Number: <b>${user.phoneNumber}</b>
     </div>
     <br>
     <hr>
-    <h1 style="text-align: center">Товары пользователя ${user.name}</h1>
+    <h1 style="text-align: center">Products of User ${user.name}</h1>
     <br>
     <div class="card-columns">
         <#list products as product>
@@ -32,7 +32,7 @@
                 </div>
             </a>
         <#else>
-            <h1 style="text-align: center">Не найдено</h1>
+            <h1 style="text-align: center">Not found</h1>
         </#list>
     </div>
 </@t.template>
