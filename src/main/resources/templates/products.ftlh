@@ -7,9 +7,9 @@
                 <label for="searchCity">City</label>
                 <select id="searchCity" class="form-control">
                     <option value="">The city is not selected</option>
-                    <option value="Berlin">Berlin</option>
-                    <option value="Köln">Köln</option>
-                    <option value="Düsseldorf">Düsseldorf</option>
+                    <#list allCities as perCity>
+                    <option value="${perCity.id}">${perCity.city_name}</option>
+                    </#list>
                 </select>
             </div>
             <div class="form-group col-md-10">
@@ -33,7 +33,9 @@
                         <p class="card-text">${product.price} €</p>
                     </div>
                     <div class="card-footer">
-                        ${product.city}
+                        <#list product.cities as city>
+                            ${city.city_name}<#if city_has_next>, </#if>
+                        </#list>
                     </div>
                 </div>
             </a>

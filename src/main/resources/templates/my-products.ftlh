@@ -24,12 +24,12 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="searchCity">City</label>
-                <select id="searchCity" required name="city" class="form-control">
+                <label for="cities">Cities</label>
+                <select id="cities" required name="cityIds" class="form-control" multiple>
                     <option value="">The city is not selected</option>
-                    <option value="Berlin">Berlin</option>
-                    <option value="Köln">Köln</option>
-                    <option value="Düsseldorf">Düsseldorf</option>
+                    <#list germanCities as city>
+                        <option value="${city.id}">${city.city_name}</option>
+                    </#list>
                 </select>
             </div>
             <div class="form-group">
@@ -78,7 +78,9 @@
                         <p class="card-text">${product.price} €</p>
                     </div>
                     <div class="card-footer">
-                        ${product.city}
+                        <#list product.cities as city>
+                            ${city.city_name}<#if city_has_next>, </#if>
+                       </#list>
                     </div>
                 </div>
             </a>
