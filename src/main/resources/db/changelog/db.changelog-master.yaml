@@ -2,10 +2,14 @@ databaseChangeLog:
   - include:
       file: db/changelog/migrations/schema.yaml
   - include:
+      file: db/changelog/migrations/german_cities.yaml
+  - include:
       file: db/changelog/migrations/users.yaml
+  - include:
+      file: db/changelog/migrations/user_roles.yaml
   - include:
       file: db/changelog/migrations/products.yaml
   - include:
-      file: db/changelog/migrations/images.yaml
+      file: db/changelog/migrations/product_cities.yaml
   - include:
-      file: db/changelog/migrations/user_roles.yaml
+      file: db/changelog/migrations/images.yaml
