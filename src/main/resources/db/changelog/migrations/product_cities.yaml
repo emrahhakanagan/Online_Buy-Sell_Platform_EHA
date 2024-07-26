@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 6
+      author: Emrah Hakan Agan
+      changes:
+        - sql:
+            sql: |
+              CREATE TABLE IF NOT EXISTS buyselleha.product_cities (
+                product_id BIGINT NOT NULL,
+                german_city_id BIGINT NOT NULL,
+                CONSTRAINT fk_product_city FOREIGN KEY (product_id) REFERENCES buyselleha.products(id),
+                CONSTRAINT fk_city_product FOREIGN KEY (german_city_id) REFERENCES buyselleha.german_cities(id)
+              );
