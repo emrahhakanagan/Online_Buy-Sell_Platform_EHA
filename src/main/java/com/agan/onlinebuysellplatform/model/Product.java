@@ -25,9 +25,6 @@ public class Product {
     @Column(name = "price")
     private Integer price;
 
-    @Column(name = "city")
-    private String city;
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,
             mappedBy = "product")
     private List<Image> images = new ArrayList<>();
@@ -42,11 +39,17 @@ public class Product {
     @Column(name = "date_of_created")
     private LocalDateTime dateOfCreated;
 
+    @ManyToMany
+    @JoinTable(name = "product_cities",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "german_city_id")
+    )
+    private List<GermanCity> cities = new ArrayList<>();
+
     @PrePersist
     private void onCreate() {
         dateOfCreated = LocalDateTime.now();
     }
-
 
     public void addImageToProduct(Image image) {
         image.setProduct(this);
