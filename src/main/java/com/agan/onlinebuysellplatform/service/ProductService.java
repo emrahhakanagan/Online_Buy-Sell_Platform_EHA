@@ -1,5 +1,6 @@
 package com.agan.onlinebuysellplatform.service;
 
+import com.agan.onlinebuysellplatform.model.GermanCity;
 import com.agan.onlinebuysellplatform.model.Image;
 import com.agan.onlinebuysellplatform.model.Product;
 import com.agan.onlinebuysellplatform.model.User;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,6 +23,7 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final GermanCityService germanCityService;
 
     public List<Product> listProducts(String title) {
         if (title != null) return productRepository.findByTitle(title);
@@ -28,7 +31,7 @@ public class ProductService {
     }
 
 
-    public void saveProduct(Principal principal, Product product, MultipartFile... files) {
+    public void saveProduct(Principal principal, Product product, List<Long> cityIds, MultipartFile... files) {
         product.setUser(getUserByPrincipal(principal));
 
         List<Image> images = Arrays.stream(files)
@@ -41,6 +44,12 @@ public class ProductService {
                     product.addImageToProduct(image);
                 })
                 .toList();
+
+        List<GermanCity> cities = cityIds.stream()
+                        .map(germanCityService::getCityById)
+                        .collect(Collectors.toList());
+
+        product.setCities(cities);
 
         log.info("Saving new Product. Title: {}; Author email: {}", product.getTitle(), product.getUser().getEmail());
 

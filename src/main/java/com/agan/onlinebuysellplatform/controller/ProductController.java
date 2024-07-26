@@ -2,10 +2,9 @@ package com.agan.onlinebuysellplatform.controller;
 
 import com.agan.onlinebuysellplatform.model.Product;
 import com.agan.onlinebuysellplatform.model.User;
+import com.agan.onlinebuysellplatform.service.GermanCityService;
 import com.agan.onlinebuysellplatform.service.ProductService;
-import com.agan.onlinebuysellplatform.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,17 +15,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
+    private final GermanCityService germanCityService;
 
     @GetMapping("/")
     public String products(@RequestParam(name = "searchWord", required = false) String title, Principal principal, Model model) {
         model.addAttribute("products", productService.listProducts(title));
         model.addAttribute("user", productService.getUserByPrincipal(principal));
         model.addAttribute("searchWord", title);
+        model.addAttribute("allCities", germanCityService.getAllCities());
         return "products";
     }
 
@@ -41,9 +43,13 @@ public class ProductController {
     }
 
     @PostMapping("/product/create")
-    public String createProduct(@RequestParam("file1") MultipartFile file1, @RequestParam("file2") MultipartFile file2,
-                                @RequestParam("file3") MultipartFile file3, Product product, Principal principal) throws IOException {
-        productService.saveProduct(principal, product, file1, file2, file3);
+    public String createProduct(@RequestParam("file1") MultipartFile file1,
+                                @RequestParam("file2") MultipartFile file2,
+                                @RequestParam("file3") MultipartFile file3,
+                                Product product,
+                                Principal principal,
+                                @RequestParam List<Long> cityIds) throws IOException {
+        productService.saveProduct(principal, product, cityIds, file1, file2, file3);
         return "redirect:/my/products";
     }
 
@@ -58,6 +64,7 @@ public class ProductController {
         User user = productService.getUserByPrincipal(principal);
         model.addAttribute("user", user);
         model.addAttribute("products", user.getProducts());
+        model.addAttribute("germanCities", germanCityService.getAllCities());
         return "my-products";
     }
 }
