@@ -5,6 +5,8 @@ import com.agan.onlinebuysellplatform.model.User;
 import com.agan.onlinebuysellplatform.service.GermanCityService;
 import com.agan.onlinebuysellplatform.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,11 +26,23 @@ public class ProductController {
     private final GermanCityService germanCityService;
 
     @GetMapping("/")
-    public String products(@RequestParam(name = "searchWord", required = false) String title, Principal principal, Model model) {
-        model.addAttribute("products", productService.listProducts(title));
+    public String products(@RequestParam(name = "searchWord", required = false) String keyword, Principal principal, Model model) {
+        List<Product> products;
+        String messageSearchProduct;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            products = productService.searchProducts(keyword);
+            messageSearchProduct = products.size() + " Product(s) found based on the request";
+        } else {
+            products = productService.listProducts(null);
+            messageSearchProduct = "No products found based on the request! You can see other products on our platform;";
+        }
+        model.addAttribute("products", products);
         model.addAttribute("user", productService.getUserByPrincipal(principal));
-        model.addAttribute("searchWord", title);
+        model.addAttribute("searchWord", keyword);
         model.addAttribute("allCities", germanCityService.getAllCities());
+        model.addAttribute("messageSearchProduct", messageSearchProduct);
+
         return "products";
     }
 

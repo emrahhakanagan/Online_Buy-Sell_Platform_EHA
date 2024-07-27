@@ -30,6 +30,9 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public List<Product> searchProducts(String keyword) {
+        return productRepository.findByTitle(keyword);
+    }
 
     public void saveProduct(Principal principal, Product product, List<Long> cityIds, MultipartFile... files) {
         product.setUser(getUserByPrincipal(principal));
