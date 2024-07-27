@@ -5,8 +5,6 @@ import com.agan.onlinebuysellplatform.model.User;
 import com.agan.onlinebuysellplatform.service.GermanCityService;
 import com.agan.onlinebuysellplatform.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -30,8 +27,8 @@ public class ProductController {
         List<Product> products;
         String messageSearchProduct;
 
-        if (keyword != null && !keyword.isEmpty()) {
-            products = productService.searchProducts(keyword);
+        if (keyword != null && !keyword.isBlank()) {
+            products = productService.searchProductByKeywordTitle(keyword);
             messageSearchProduct = products.size() + " Product(s) found based on the request";
         } else {
             products = productService.listProducts(null);
@@ -62,7 +59,7 @@ public class ProductController {
                                 @RequestParam("file3") MultipartFile file3,
                                 Product product,
                                 Principal principal,
-                                @RequestParam List<Long> cityIds) throws IOException {
+                                @RequestParam List<Long> cityIds) {
         productService.saveProduct(principal, product, cityIds, file1, file2, file3);
         return "redirect:/my/products";
     }

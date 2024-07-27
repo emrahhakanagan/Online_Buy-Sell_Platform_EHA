@@ -30,8 +30,9 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public List<Product> searchProducts(String keyword) {
-        return productRepository.findByTitle(keyword);
+    public List<Product> searchProductByKeywordTitle(String keyword) {
+        keyword = keyword.trim().toLowerCase().toUpperCase();
+        return productRepository.searchProductByKeywordTitle(keyword);
     }
 
     public void saveProduct(Principal principal, Product product, List<Long> cityIds, MultipartFile... files) {
@@ -49,8 +50,8 @@ public class ProductService {
                 .toList();
 
         List<GermanCity> cities = cityIds.stream()
-                        .map(germanCityService::getCityById)
-                        .collect(Collectors.toList());
+                .map(germanCityService::getCityById)
+                .collect(Collectors.toList());
 
         product.setCities(cities);
 
@@ -90,7 +91,8 @@ public class ProductService {
             }
         } else {
             log.error("Product with id = {} is not found", id);
-        }    }
+        }
+    }
 
     public Product getProductById(Long id) {
         return productRepository.findById(id).orElse(null);
