@@ -1,5 +1,6 @@
 package com.agan.onlinebuysellplatform.controller;
 
+import com.agan.onlinebuysellplatform.model.GermanCity;
 import com.agan.onlinebuysellplatform.model.Product;
 import com.agan.onlinebuysellplatform.model.User;
 import com.agan.onlinebuysellplatform.service.GermanCityService;
@@ -23,13 +24,23 @@ public class ProductController {
     private final GermanCityService germanCityService;
 
     @GetMapping("/")
-    public String products(@RequestParam(name = "searchWord", required = false) String keyword, Principal principal, Model model) {
+    public String products(@RequestParam(name = "searchWord", required = false) String keyword,
+                           @RequestParam(name = "cityId", required = false) Long cityId,
+                           Principal principal, Model model) {
+
         List<Product> products;
         String messageSearchProduct;
+        String cityNameById = "";
+
 
         if (keyword != null && !keyword.isBlank()) {
-            products = productService.searchProductByKeywordTitle(keyword);
-            messageSearchProduct = products.size() + " Product(s) found based on the request";
+            if (cityId >= 0) {
+                products = productService.searchProductByKeywordTitleAndCities(keyword, cityId);
+                cityNameById = germanCityService.getCityById(cityId).getCity_name();
+            } else {
+                products = productService.searchProductByKeywordTitle(keyword);
+            }
+            messageSearchProduct = "in " + cityNameById + " " + products.size() + " Product(s) found based on the request";
         } else {
             products = productService.listProducts(null);
             messageSearchProduct = "No products found based on the request! You can see other products on our platform;";
