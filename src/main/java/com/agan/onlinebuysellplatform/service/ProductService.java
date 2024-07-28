@@ -31,8 +31,17 @@ public class ProductService {
     }
 
     public List<Product> searchProductByKeywordTitle(String keyword) {
+        log.info("Keyword: {}: ", keyword);
+
         keyword = keyword.trim().toLowerCase().toUpperCase();
         return productRepository.searchProductByKeywordTitle(keyword);
+    }
+
+    public List<Product> searchProductByKeywordTitleAndCities(String keyword, Long cityIds) {
+        log.info("Keyword: {}, City ID: {}", keyword, cityIds);
+
+        keyword = keyword.trim().toLowerCase().toUpperCase();
+        return productRepository.searchProductByKeywordTitleAndCities(keyword, cityIds);
     }
 
     public void saveProduct(Principal principal, Product product, List<Long> cityIds, MultipartFile... files) {
