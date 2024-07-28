@@ -4,8 +4,8 @@
     <form method="get" action="/">
         <div class="form-row">
             <div class="form-group col-md-2">
-                <label for="searchCity">City</label>
-                <select id="searchCity" class="form-control">
+                <label for="searchCity">in City</label>
+                <select id="searchCity" name="cityId" class="form-control">
                     <option value="">All Cities</option>
                     <#list allCities as perCity>
                     <option value="${perCity.id}">${perCity.city_name}</option>
