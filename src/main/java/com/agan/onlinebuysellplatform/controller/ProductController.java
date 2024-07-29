@@ -1,6 +1,5 @@
 package com.agan.onlinebuysellplatform.controller;
 
-import com.agan.onlinebuysellplatform.model.GermanCity;
 import com.agan.onlinebuysellplatform.model.Product;
 import com.agan.onlinebuysellplatform.model.User;
 import com.agan.onlinebuysellplatform.service.GermanCityService;
@@ -28,23 +27,9 @@ public class ProductController {
                            @RequestParam(name = "cityId", required = false) Long cityId,
                            Principal principal, Model model) {
 
-        List<Product> products;
-        String messageSearchProduct;
-        String cityNameById = "";
+        List<Product> products = productService.searchProduct(cityId, keyword);
+        String messageSearchProduct = productService.showMessageSearchProduct(cityId, keyword, products);
 
-
-        if (keyword != null && !keyword.isBlank()) {
-            if (cityId >= 0) {
-                products = productService.searchProductByKeywordTitleAndCities(keyword, cityId);
-                cityNameById = germanCityService.getCityById(cityId).getCity_name();
-            } else {
-                products = productService.searchProductByKeywordTitle(keyword);
-            }
-            messageSearchProduct = "in " + cityNameById + " " + products.size() + " Product(s) found based on the request";
-        } else {
-            products = productService.listProducts(null);
-            messageSearchProduct = "No products found based on the request! You can see other products on our platform;";
-        }
         model.addAttribute("products", products);
         model.addAttribute("user", productService.getUserByPrincipal(principal));
         model.addAttribute("searchWord", keyword);
