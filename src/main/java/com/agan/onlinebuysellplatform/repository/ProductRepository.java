@@ -11,10 +11,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByTitle(String title);
 
-    @Query("SELECT p FROM Product p WHERE p.title LIKE CONCAT('%', :keyword, '%') ")
+    @Query("SELECT p FROM Product p JOIN p.cities c WHERE c.id = :cityId")
+    List<Product> searchProductByCity(@Param("cityId") Long cityId);
+
+    @Query("SELECT p FROM Product p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) ")
     List<Product> searchProductByKeywordTitle(@Param("keyword") String keyword);
 
-    @Query("SELECT p FROM Product p JOIN p.cities c WHERE p.title LIKE CONCAT('%', :keyword, '%') AND c.id = :cityIds")
-    List<Product> searchProductByKeywordTitleAndCities(@Param("keyword") String keyword, @Param("cityIds") Long cityIds);
+    @Query("SELECT p FROM Product p JOIN p.cities c WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) AND c.id = :cityId")
+    List<Product> searchProductByKeywordTitleAndCities(@Param("keyword") String keyword, @Param("cityId") Long cityId);
 
 }
