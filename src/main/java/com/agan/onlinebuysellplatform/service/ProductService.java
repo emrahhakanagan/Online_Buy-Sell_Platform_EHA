@@ -30,18 +30,40 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public List<Product> searchProductByKeywordTitle(String keyword) {
-        log.info("Keyword: {}: ", keyword);
+    public List<Product> searchProduct(Long cityId, String keyword) {
 
-        keyword = keyword.trim().toLowerCase().toUpperCase();
-        return productRepository.searchProductByKeywordTitle(keyword);
+
+        log.info("cityID: {}; / keyword: {}", cityId, keyword);
+        List<Product> products;
+
+        if (cityId != null || (keyword != null && !keyword.isEmpty())) {
+            keyword = keyword.trim().toLowerCase();
+
+            if (cityId != null && (keyword == null || keyword.isEmpty())) {
+                products = productRepository.searchProductByCity(cityId);
+            } else if (keyword != null && !keyword.isEmpty() && cityId == null) {
+                products = productRepository.searchProductByKeywordTitle(keyword);
+            } else {
+                products = productRepository.searchProductByKeywordTitleAndCities(keyword, cityId);
+            }
+        } else {
+            products = productRepository.findAll();
+        }
+
+        return products;
     }
 
-    public List<Product> searchProductByKeywordTitleAndCities(String keyword, Long cityIds) {
-        log.info("Keyword: {}, City ID: {}", keyword, cityIds);
-
-        keyword = keyword.trim().toLowerCase().toUpperCase();
-        return productRepository.searchProductByKeywordTitleAndCities(keyword, cityIds);
+    public String showMessageSearchProduct(Long cityId, String keyword, List<Product> products) {
+        if (cityId != null) {
+            String cityNameById = germanCityService.getCityById(cityId).getCity_name();
+            return "in " + cityNameById + " " + products.size() + " Product(s) found based on the request";
+        } else if (cityId == null && keyword != null && !keyword.isEmpty()) {
+            return "in all cities " + products.size() + " Product(s) found based on the request";
+        } else if (products == null || products.isEmpty()) {
+            return "No products found based on the request! You can see other products on our platform;";
+        } else {
+            return "";
+        }
     }
 
     public void saveProduct(Principal principal, Product product, List<Long> cityIds, MultipartFile... files) {
