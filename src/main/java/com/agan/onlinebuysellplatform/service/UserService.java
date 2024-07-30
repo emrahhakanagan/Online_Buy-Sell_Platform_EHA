@@ -19,16 +19,44 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
-    public boolean createUser(User user) {
-        String email = user.getEmail();
-        if (userRepository.findByEmail(email) != null) return false;
-        user.setActive(true);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.getRoles().add(Role.ROLE_USER);
-        log.info("Saving new User with email: {}", email);
+//    public boolean createUser(User user) {
+//        String email = user.getEmail();
+//        if (userRepository.findByEmail(email) != null) return false;
+//        user.setActive(true);
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        user.getRoles().add(Role.ROLE_USER);
+//        log.info("Saving new User with email: {}", email);
+//        userRepository.save(user);
+//        return true;
+//    }
+
+    public void registerNewUser(String username, String password, String email) throws Exception {
+        if (userRepository.findByEmail(username) != null) {
+            throw new Exception("User already exists");
+        }
+
+        User user = new User();
+        user.setEmail(username);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setEmail(email);
+        user.setConfirmationToken(UUID.randomUUID().toString());
         userRepository.save(user);
-        return true;
+
+        // Sending email to User
+        String subject = "Registration Confirmation";
+        String text = "To confirm your registration, please click the next link:  http://localhost:8080/confirm?token=" + user.getConfirmationToken();
+        emailService.sendEmail(email, subject, text);
+    }
+
+    public void confirmUser(String token) throws Exception {
+        User user = userRepository.findByConfirmationToken(token);
+        if (user == null) {
+            throw new Exception("Invalid token");
+        }
+        user.setConfirmed(true);
+        userRepository.save(user);
     }
 
     public List<User> list() {

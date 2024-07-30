@@ -59,11 +59,24 @@ public class UserController {
 
     @PostMapping("/registration")
     public String createUser(User user, Model model) {
-        if (!userService.createUser(user)) {
-            model.addAttribute("errorMessage", "Пользователь с email: " + user.getEmail() + " уже существует");
+        try {
+            userService.registerNewUser(user.getUsername(), user.getPassword(), user.getEmail());
+            return "redirect:/login";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
             return "registration";
         }
-        return "redirect:/login";
+    }
+
+    @GetMapping("/confirm")
+    public String confirmRegistration(@RequestParam("token") String token, Model model) {
+        try {
+            userService.confirmUser(token);
+            return "redirect:/login";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "confirm";
+        }
     }
 
     @GetMapping("/user/{user}")
