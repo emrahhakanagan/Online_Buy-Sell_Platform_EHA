@@ -37,6 +37,12 @@ public class User implements UserDetails {
     @Column(name = "password", length = 1000)
     private String password;
 
+    @Column(name = "confirmation_token")
+    private String confirmationToken;
+
+    @Column(name = "confirmed")
+    private boolean confirmed;
+
     @Column(name = "date_of_created")
     private LocalDateTime dateOfCreated;
 

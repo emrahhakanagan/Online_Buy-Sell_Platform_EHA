@@ -13,5 +13,7 @@ databaseChangeLog:
                 active BOOLEAN,
                 image_id BIGINT,
                 password VARCHAR(1000),
+                confirmation_token VARCHAR(255),
+                confirmed BOOLEAN,
                 date_of_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
               );
