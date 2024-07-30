@@ -31,9 +31,6 @@ public class ProductService {
     }
 
     public List<Product> searchProduct(Long cityId, String keyword) {
-
-
-        log.info("cityID: {}; / keyword: {}", cityId, keyword);
         List<Product> products;
 
         if (cityId != null || (keyword != null && !keyword.isEmpty())) {
