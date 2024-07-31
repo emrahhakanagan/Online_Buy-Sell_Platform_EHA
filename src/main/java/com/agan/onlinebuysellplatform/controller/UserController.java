@@ -41,8 +41,7 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public String profile(Principal principal,
-                          Model model) {
+    public String profile(Principal principal, Model model) {
         User user = userService.getUserByPrincipal(principal);
         model.addAttribute("user", user);
 
@@ -60,7 +59,8 @@ public class UserController {
     @PostMapping("/registration")
     public String createUser(User user, Model model) {
         try {
-            userService.registerNewUser(user.getUsername(), user.getPassword(), user.getEmail());
+            userService.registerNewUser(user.getName(), user.getPhoneNumber(), user.getEmail(), user.getPassword());
+
             return "redirect:/login";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -71,8 +71,9 @@ public class UserController {
     @GetMapping("/confirm")
     public String confirmRegistration(@RequestParam("token") String token, Model model) {
         try {
-            userService.confirmUser(token);
-            return "redirect:/login";
+            User user = userService.confirmUser(token);
+            model.addAttribute("user", user);
+            return "confirm";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "confirm";

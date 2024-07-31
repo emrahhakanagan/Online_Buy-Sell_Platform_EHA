@@ -21,42 +21,38 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
-//    public boolean createUser(User user) {
-//        String email = user.getEmail();
-//        if (userRepository.findByEmail(email) != null) return false;
-//        user.setActive(true);
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        user.getRoles().add(Role.ROLE_USER);
-//        log.info("Saving new User with email: {}", email);
-//        userRepository.save(user);
-//        return true;
-//    }
-
-    public void registerNewUser(String username, String password, String email) throws Exception {
-        if (userRepository.findByEmail(username) != null) {
+    public void registerNewUser(String name, String phoneNumber, String email, String password) throws Exception {
+        if (userRepository.findByEmail(email) != null) {
             throw new Exception("User already exists");
         }
 
         User user = new User();
-        user.setEmail(username);
-        user.setPassword(passwordEncoder.encode(password));
+        user.setName(name);
+        user.setPhoneNumber(phoneNumber);
         user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
         user.setConfirmationToken(UUID.randomUUID().toString());
+        user.setActive(true);
+        user.setRoles(Collections.singleton(Role.ROLE_USER));
         userRepository.save(user);
 
         // Sending email to User
         String subject = "Registration Confirmation";
-        String text = "To confirm your registration, please click the next link:  http://localhost:8080/confirm?token=" + user.getConfirmationToken();
+        String text = "<p>To confirm your registration, please click the following link: <a href=\"http://localhost:8080/confirm?token=" + user.getConfirmationToken() + "\">Confirm Registration</a></p>";
+
         emailService.sendEmail(email, subject, text);
     }
 
-    public void confirmUser(String token) throws Exception {
+    public User confirmUser(String token) throws Exception {
         User user = userRepository.findByConfirmationToken(token);
         if (user == null) {
             throw new Exception("Invalid token");
         }
+
         user.setConfirmed(true);
         userRepository.save(user);
+
+        return user;
     }
 
     public List<User> list() {
