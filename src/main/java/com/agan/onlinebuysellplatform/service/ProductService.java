@@ -53,15 +53,21 @@ public class ProductService {
     }
 
     public String showMessageSearchProduct(Long cityId, String keyword, List<Product> products) {
-        if (cityId != null) {
-            String cityNameById = germanCityService.getCityById(cityId).getCity_name();
-            return "in " + cityNameById + " " + products.size() + " Product(s) found based on the request";
-        } else if (cityId == null && keyword != null && !keyword.isEmpty()) {
-            return "in all cities " + products.size() + " Product(s) found based on the request";
-        } else if (products == null || products.isEmpty()) {
-            return "No products found based on the request! You can see other products on our platform;";
+        List<Product> isExistAnyProduct = productRepository.findAll();
+
+        if (!isExistAnyProduct.isEmpty()) {
+            if (cityId != null) {
+                String cityNameById = germanCityService.getCityById(cityId).getCity_name();
+                return "in " + cityNameById + " " + products.size() + " Product(s) found based on the request";
+            } else if (cityId == null && keyword != null && !keyword.isEmpty()) {
+                return "in all cities " + products.size() + " Product(s) found based on the request";
+            } else if (products == null || products.isEmpty()) {
+                return "No products found based on the request! You can see other products on our platform;";
+            } else {
+                return "";
+            }
         } else {
-            return "";
+            return "No products found on our platform;";
         }
     }
 
