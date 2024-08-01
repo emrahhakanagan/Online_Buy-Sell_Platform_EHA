@@ -36,7 +36,9 @@ public class ProductService {
         List<Product> products;
 
         if (cityId != null || (keyword != null && !keyword.isEmpty())) {
-            keyword = keyword.trim().toLowerCase();
+            if (keyword != null) {
+                keyword = keyword.trim().toLowerCase();
+            }
 
             if (cityId != null && (keyword == null || keyword.isEmpty())) {
                 products = productRepository.searchProductByCity(cityId);
