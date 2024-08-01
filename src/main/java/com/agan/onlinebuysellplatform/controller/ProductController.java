@@ -4,6 +4,7 @@ import com.agan.onlinebuysellplatform.model.Product;
 import com.agan.onlinebuysellplatform.model.User;
 import com.agan.onlinebuysellplatform.service.GermanCityService;
 import com.agan.onlinebuysellplatform.service.ProductService;
+import com.agan.onlinebuysellplatform.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,7 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
     private final GermanCityService germanCityService;
+    private final UserService userService;
 
     @GetMapping("/")
     public String products(@RequestParam(name = "searchWord", required = false) String keyword,
@@ -62,7 +64,8 @@ public class ProductController {
 
     @PostMapping("/product/delete/{id}")
     public String deleteProduct(@PathVariable Long id, Principal principal) {
-        productService.deleteProduct(productService.getUserByPrincipal(principal), id);
+        productService.deleteProduct(id);
+
         return "redirect:/my/products";
     }
 

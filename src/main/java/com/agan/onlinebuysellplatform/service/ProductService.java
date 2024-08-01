@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
@@ -24,6 +25,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final GermanCityService germanCityService;
+    private final UserService userService;
 
     public List<Product> listProducts(String title) {
         if (title != null) return productRepository.findByTitle(title);
@@ -44,7 +46,7 @@ public class ProductService {
                 products = productRepository.searchProductByKeywordTitleAndCities(keyword, cityId);
             }
         } else {
-            products = productRepository.findAll();
+            products = listProducts(keyword);
         }
 
         return products;
@@ -107,19 +109,9 @@ public class ProductService {
         return image;
     }
 
-    public void deleteProduct(User user, Long id) {
-        Product product = productRepository.findById(id)
-                .orElse(null);
-        if (product != null) {
-            if (product.getUser().getId().equals(user.getId())) {
-                productRepository.delete(product);
-                log.info("Product with id = {} was deleted", id);
-            } else {
-                log.error("User: {} haven't this product with id = {}", user.getEmail(), id);
-            }
-        } else {
-            log.error("Product with id = {} is not found", id);
-        }
+    @Transactional
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
     }
 
     public Product getProductById(Long id) {
