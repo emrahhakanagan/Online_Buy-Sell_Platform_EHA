@@ -3,6 +3,7 @@ package com.agan.onlinebuysellplatform.model;
 import com.agan.onlinebuysellplatform.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,6 +13,7 @@ import java.util.*;
 @Entity
 @Table(schema = "buyselleha", name = "users")
 @Data
+@ToString(exclude = {"products"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,6 +2,7 @@ package com.agan.onlinebuysellplatform.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Table(schema = "buyselleha", name = "products")
 @Data
+@ToString(exclude = {"user", "images", "cities"})
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
