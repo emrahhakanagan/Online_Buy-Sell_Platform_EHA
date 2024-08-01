@@ -13,6 +13,7 @@ databaseChangeLog:
                 preview_image_id BIGINT,
                 date_of_created TIMESTAMP,
                 user_id BIGINT,
+                city_id BIGINT,
                 FOREIGN KEY (user_id) REFERENCES buyselleha.users(id),
                 FOREIGN KEY (city_id) REFERENCES buyselleha.german_cities(id)
               );
