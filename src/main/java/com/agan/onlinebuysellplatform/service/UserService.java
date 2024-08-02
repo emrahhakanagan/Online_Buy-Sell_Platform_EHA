@@ -105,4 +105,11 @@ public class UserService {
     public Optional<User> getUserById(Long userId) {
         return userRepository.findById(userId);
     }
+
+    public User findUserByEmail(String email) {
+        if (email == null) {
+            throw new RuntimeException("Email: " + email + " does not exist");
+        }
+        return userRepository.findByEmail(email);
+    }
 }
