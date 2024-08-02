@@ -5,7 +5,6 @@ import com.agan.onlinebuysellplatform.model.Image;
 import com.agan.onlinebuysellplatform.model.Product;
 import com.agan.onlinebuysellplatform.model.User;
 import com.agan.onlinebuysellplatform.repository.ProductRepository;
-import com.agan.onlinebuysellplatform.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
     private final GermanCityService germanCityService;
     private final UserService userService;
 
@@ -102,8 +100,10 @@ public class ProductService {
     }
 
     public User getUserByPrincipal(Principal principal) {
-        if (principal == null) return new User();
-        return userRepository.findByEmail(principal.getName());
+        if (principal == null) {
+            throw new RuntimeException("Principal is null and user does not exist");
+        }
+        return userService.getUserByPrincipal(principal);
     }
 
     @SneakyThrows
