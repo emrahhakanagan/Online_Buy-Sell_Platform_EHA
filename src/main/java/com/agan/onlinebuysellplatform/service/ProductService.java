@@ -119,7 +119,11 @@ public class ProductService {
 
     @Transactional
     public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
+        if (productRepository.existsById(id)) {
+            productRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Product with id: " + id + " does not exist");
+        }
     }
 
     public Product getProductById(Long id) {
