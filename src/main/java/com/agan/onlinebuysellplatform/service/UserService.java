@@ -30,7 +30,7 @@ public class UserService {
         user.setName(userNew.getName());
         user.setPhoneNumber(userNew.getPhoneNumber());
         user.setEmail(userNew.getEmail());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(userNew.getPassword()));
         user.setConfirmationToken(UUID.randomUUID().toString());
         user.setActive(true);
         user.setRoles(Collections.singleton(Role.ROLE_USER));
@@ -75,23 +75,27 @@ public class UserService {
 
     public void changeUserRoles(Long userId, String[] roles) {
 
-            Optional<User> optionalUser = Optional.ofNullable(userRepository.findById(userId)
-                    .orElseThrow(() -> new UserNotFoundException("User with id: " + userId + " not found")));
+            Optional<User> optionalUser = userRepository.findById(userId);
 
-            User user = optionalUser.get();
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
 
-            Set<String> rolesFromEnum = Arrays.stream(Role.values())
-                    .map(Role::name)
-                    .collect(Collectors.toSet());
 
-            user.getRoles().clear();
+                Set<String> rolesFromEnum = Arrays.stream(Role.values())
+                        .map(Role::name)
+                        .collect(Collectors.toSet());
 
-            Arrays.stream(roles)
-                    .filter(rolesFromEnum::contains)
-                    .map(Role::valueOf)
-                    .forEach(user.getRoles()::add);
+                user.getRoles().clear();
 
-            userRepository.save(user);
+                Arrays.stream(roles)
+                        .filter(rolesFromEnum::contains)
+                        .map(Role::valueOf)
+                        .forEach(user.getRoles()::add);
+
+                userRepository.save(user);
+            } else {
+                throw new UserNotFoundException("User with id: " + userId + " not found");
+            }
     }
 
     public User getUserByPrincipal(Principal principal) {
