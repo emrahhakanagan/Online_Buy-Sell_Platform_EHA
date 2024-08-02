@@ -59,7 +59,7 @@ public class UserController {
     @PostMapping("/registration")
     public String createUser(User user, Model model) {
         try {
-            userService.registerNewUser(user.getName(), user.getPhoneNumber(), user.getEmail(), user.getPassword());
+            userService.registerNewUser(user);
 
             return "redirect:/login";
         } catch (Exception e) {

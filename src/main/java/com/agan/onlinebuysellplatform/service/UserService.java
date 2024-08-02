@@ -21,16 +21,16 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
-    public void registerNewUser(String name, String phoneNumber, String email, String password) throws Exception {
-        if (userRepository.findByEmail(email) != null) {
+    public void registerNewUser(User userNew) throws Exception {
+        if (userRepository.findByEmail(userNew.getEmail()) != null) {
             throw new Exception("User already exists");
         }
 
         User user = new User();
-        user.setName(name);
-        user.setPhoneNumber(phoneNumber);
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
+        user.setName(userNew.getName());
+        user.setPhoneNumber(userNew.getPhoneNumber());
+        user.setEmail(userNew.getEmail());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setConfirmationToken(UUID.randomUUID().toString());
         user.setActive(true);
         user.setRoles(Collections.singleton(Role.ROLE_USER));
@@ -40,7 +40,7 @@ public class UserService {
         String subject = "Registration Confirmation";
         String text = "<p>To confirm your registration, please click the following link: <a href=\"http://localhost:8080/confirm?token=" + user.getConfirmationToken() + "\">Confirm Registration</a></p>";
 
-        emailService.sendEmail(email, subject, text);
+        emailService.sendEmail(userNew.getEmail(), subject, text);
     }
 
     public User confirmUser(String token) throws Exception {
