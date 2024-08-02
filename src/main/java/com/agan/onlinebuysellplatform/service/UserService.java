@@ -80,17 +80,16 @@ public class UserService {
             if (optionalUser.isPresent()) {
                 User user = optionalUser.get();
 
-
                 Set<String> rolesFromEnum = Arrays.stream(Role.values())
                         .map(Role::name)
                         .collect(Collectors.toSet());
 
-                user.getRoles().clear();
-
-                Arrays.stream(roles)
+                Set<Role> newRoleSet = Arrays.stream(roles)
                         .filter(rolesFromEnum::contains)
                         .map(Role::valueOf)
-                        .forEach(user.getRoles()::add);
+                        .collect(Collectors.toSet());
+
+                user.setRoles(newRoleSet);
 
                 userRepository.save(user);
             } else {
