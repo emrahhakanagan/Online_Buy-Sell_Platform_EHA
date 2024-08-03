@@ -3,11 +3,12 @@ package com.agan.onlinebuysellplatform.service;
 import com.agan.onlinebuysellplatform.model.GermanCity;
 import com.agan.onlinebuysellplatform.model.Product;
 import com.agan.onlinebuysellplatform.model.User;
-import com.agan.onlinebuysellplatform.model.enums.Role;
 import com.agan.onlinebuysellplatform.repository.ProductRepository;
 import com.agan.onlinebuysellplatform.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -25,7 +26,7 @@ public class ProductServiceTest {
     private ProductRepository productRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Mock
     private GermanCityService germanCityService;
@@ -42,27 +43,23 @@ public class ProductServiceTest {
     @InjectMocks
     private ProductService productService;
 
-    private User user;
+    private Product product1;
+    private GermanCity germanCity;
 
     @BeforeEach
-    void save() {
+    void setUpMocks() {
         MockitoAnnotations.openMocks(this);
     }
 
     @BeforeEach
-    public void setUp() {
-        user = new User();
-        user.setId(1L);
-        user.setEmail("test@example.com");
-        user.setPassword("password");
-        user.setRoles(Collections.singleton(Role.ROLE_USER));
-        user.setConfirmed(false);
+    void setUpProduct() {
+        product1 = new Product();
+        product1.setTitle("Product 1");
     }
 
     @Test
-    public void testListProducts() {
-        Product product1 = new Product();
-        product1.setTitle("Product 1");
+    @DisplayName("Should return list of products when products exist")
+    public void testListProducts_WhenProductsExist() {
 
         Product product2 = new Product();
         product2.setTitle("Product 2");
@@ -76,21 +73,57 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testSearchProduct() {
-        Product product1 = new Product();
-        product1.setTitle("Product 1");
+    @DisplayName("Should return empty list when no products exist")
+    public void testListProducts_WhenNoProductsExist() {
+        when(productRepository.findAll()).thenReturn(Collections.emptyList());
 
+        List<Product> products = productService.listProducts(null);
+        assertTrue(products.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Should return list of products when searching by city")
+    public void testSearchProduct_WhenSearchingByCity() {
         when(productRepository.searchProductByCity(1L)).thenReturn(Collections.singletonList(product1));
-        when(productRepository.searchProductByKeywordTitle("test")).thenReturn(Collections.singletonList(product1));
-        when(productRepository.searchProductByKeywordTitleAndCities("test", 1L)).thenReturn(Collections.singletonList(product1));
 
         List<Product> productsByCity = productService.searchProduct(1L, null);
         assertEquals(1, productsByCity.size());
         assertEquals("Product 1", productsByCity.get(0).getTitle());
+    }
+
+    @Test
+    @DisplayName("Should return empty list when no products found by city")
+    public void testSearchProduct_WhenNoProductsFoundByCity() {
+        when(productRepository.searchProductByCity(1L)).thenReturn(Collections.emptyList());
+
+        List<Product> productsByCity = productService.searchProduct(1L, null);
+        assertTrue(productsByCity.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Should return list of products when searching by keyword")
+    public void testSearchProduct_WhenSearchingByKeyword() {
+        when(productRepository.searchProductByKeywordTitle("test")).thenReturn(Collections.singletonList(product1));
 
         List<Product> productsByKeyword = productService.searchProduct(null, "test");
         assertEquals(1, productsByKeyword.size());
         assertEquals("Product 1", productsByKeyword.get(0).getTitle());
+    }
+
+    @Test
+    @DisplayName("Should return empty list when no products found by keyword")
+    public void testSearchProduct_WhenNoProductsFoundByKeyword() {
+        when(productRepository.searchProductByKeywordTitle("test")).thenReturn(Collections.emptyList());
+
+        List<Product> productsByKeyword = productService.searchProduct(null, "test");
+        assertTrue(productsByKeyword.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Should return list of products when searching by keyword and city")
+    public void testSearchProduct_WhenSearchingByKeywordAndCity() {
+        when(productRepository.searchProductByKeywordTitleAndCities("test", 1L))
+                .thenReturn(Collections.singletonList(product1));
 
         List<Product> productsByKeywordAndCity = productService.searchProduct(1L, "test");
         assertEquals(1, productsByKeywordAndCity.size());
@@ -98,52 +131,98 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testShowMessageSearchProduct() {
-        // Мокируем метод productRepository.findAll()
-        when(productRepository.findAll()).thenReturn(Arrays.asList(new Product(), new Product()));
+    @DisplayName("Should return empty list when no products found by keyword and city")
+    public void testSearchProduct_WhenNoProductsFoundByKeywordAndCity() {
+        when(productRepository.searchProductByKeywordTitleAndCities("test", 1L))
+                .thenReturn(Collections.emptyList());
 
-        // Первый случай: продукты существуют, поиск по городу
-        when(germanCityService.getCityById(1L)).thenReturn(new GermanCity(1L, "Berlin", new ArrayList<>()));
-        String message = productService.showMessageSearchProduct(1L, null, Arrays.asList(new Product(), new Product()));
-        assertTrue(message.contains("in Berlin 2 Product(s) found based on the request"));
-
-        // Второй случай: продукты существуют, поиск по ключевому слову
-        message = productService.showMessageSearchProduct(null, "test", Arrays.asList(new Product(), new Product()));
-        assertTrue(message.contains("in all cities 2 Product(s) found based on the request"));
-
-        // Третий случай: продукты существуют, но не найдены по запросу
-        message = productService.showMessageSearchProduct(null, null, Collections.emptyList());
-        assertTrue(message.contains("No products found based on the request! You can see other products on our platform;"));
-
-        // Четвертый случай: продукты не существуют в базе данных
-        when(productRepository.findAll()).thenReturn(Collections.emptyList());
-        message = productService.showMessageSearchProduct(1L, null, Arrays.asList(new Product(), new Product()));
-        assertTrue(message.contains("No products found on our platform;"));
+        List<Product> productsByKeywordAndCity = productService.searchProduct(1L, "test");
+        assertTrue(productsByKeywordAndCity.isEmpty());
     }
 
     @Test
-    void testFindByTitle() {
-        Product product = new Product();
-        product.setTitle("Test Product");
+    @DisplayName("Should show message with no products on platform when no products exist")
+    public void testShowMessageSearchProduct_WhenNoProductsExist() {
+        when(productRepository.findAll()).thenReturn(Collections.emptyList());
+        String message = productService.showMessageSearchProduct(null, null, null);
+        assertEquals("No products found on our platform;", message);
+    }
 
-        when(productRepository.findByTitle("Test Product")).thenReturn(Collections.singletonList(product));
+    @Test
+    @DisplayName("Should show message with no products found based on the request")
+    public void testShowMessageSearchProduct_WhenProductsIsEmpty() {
+        List<Product> allProducts = Arrays.asList(new Product(), new Product());
+        List<Product> searchProducts = Collections.emptyList();
+        when(productRepository.findAll()).thenReturn(allProducts);
+        String message = productService.showMessageSearchProduct(null, null, searchProducts);
+        assertEquals("No products found based on the request! You can see other products on our platform;", message);
+    }
 
-        List<Product> products = productService.listProducts("Test Product");
+    @Test
+    @DisplayName("Should show message with product count in all cities when products are found by keyword")
+    public void testShowMessageSearchProduct_WhenProductsFoundByKeyword() {
+        List<Product> products = Arrays.asList(new Product(), new Product());
+        when(productRepository.findAll()).thenReturn(products);
+        String message = productService.showMessageSearchProduct(null, "test", products);
+        assertEquals("in all cities 2 Product(s) found based on the request", message);
+    }
+
+    @Test
+    @DisplayName("Should show message with product count in city when products are found by city")
+    public void testShowMessageSearchProduct_WhenProductsFoundByCity() {
+        List<Product> products = Arrays.asList(new Product(), new Product());
+        germanCity = new GermanCity();
+        germanCity.setId(1L);
+        germanCity.setCity_name("CityName");
+
+        when(productRepository.findAll()).thenReturn(products);
+        when(germanCityService.getCityById(1L)).thenReturn(germanCity);
+        String message = productService.showMessageSearchProduct(1L, null, products);
+        assertEquals("in CityName 2 Product(s) found based on the request", message);
+    }
+
+    @Test
+    @DisplayName("Should show message with all products when no city or keyword is specified")
+    public void testShowMessageSearchProduct_WhenNoCityAndKeyword() {
+        List<Product> products = Arrays.asList(new Product(), new Product());
+        when(productRepository.findAll()).thenReturn(products);
+        String message = productService.showMessageSearchProduct(null, null, products);
+        assertEquals("", message);
+    }
+
+    @Test
+    @DisplayName("Should return products when products with given title are found")
+    public void testFindByTitle_WhenProductsWithTitleAreFound() {
+        when(productRepository.findByTitle("Product 1")).thenReturn(Collections.singletonList(product1));
+
+        List<Product> products = productService.listProducts("Product 1");
 
         assertEquals(1, products.size());
-        assertEquals("Test Product", products.get(0).getTitle());
-        verify(productRepository, times(1)).findByTitle("Test Product");
+        assertEquals("Product 1", products.get(0).getTitle());
+        verify(productRepository, times(1)).findByTitle("Product 1");
     }
 
     @Test
-    void testSaveProduct() throws Exception {
+    @DisplayName("Should return empty list when no products with given title are found")
+    public void testFindByTitle_WhenNoProductsWithTitleAreFound() {
+        when(productRepository.findByTitle("Nonexistent Product")).thenReturn(Collections.emptyList());
+
+        List<Product> products = productService.listProducts("Nonexistent Product");
+
+        assertTrue(products.isEmpty());
+        verify(productRepository, times(1)).findByTitle("Nonexistent Product");
+    }
+
+    @Test
+    @DisplayName("Should save product when all inputs are valid")
+    public void testSaveProduct_WhenAllInputsAreValid() throws Exception {
         Principal principal = mock(Principal.class);
         when(principal.getName()).thenReturn("test@example.com");
 
         User user = new User();
         user.setEmail("test@example.com");
 
-        when(userRepository.findByEmail("test@example.com")).thenReturn(user);
+        when(userService.getUserByPrincipal(principal)).thenReturn(user);
         when(productRepository.save(any(Product.class))).thenAnswer(i -> i.getArgument(0));
 
         MultipartFile file1 = mock(MultipartFile.class);
@@ -153,36 +232,65 @@ public class ProductServiceTest {
         when(file2.getSize()).thenReturn(200L);
         when(file3.getSize()).thenReturn(300L);
 
-        Product product = new Product();
-        product.setTitle("Test Product");
+        List<Long> cityIds = Arrays.asList(1L, 2L);
+        GermanCity city1 = new GermanCity(1L, "City1", new ArrayList<>());
+        GermanCity city2 = new GermanCity(2L, "City2", new ArrayList<>());
+        when(germanCityService.getCityById(1L)).thenReturn(city1);
+        when(germanCityService.getCityById(2L)).thenReturn(city2);
 
-        productService.saveProduct(principal, product, Collections.singletonList(1L), file1, file2, file3);
+        productService.saveProduct(principal, product1, cityIds, file1, file2, file3);
 
-        verify(productRepository, times(2)).save(any(Product.class));
-        assertEquals("test@example.com", product.getUser().getEmail());
+        ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
+        verify(productRepository, times(2)).save(productCaptor.capture());
+        Product savedProduct = productCaptor.getAllValues().get(0);
+
+        assertEquals(user, savedProduct.getUser());
+        assertEquals(3, savedProduct.getImages().size());
+        assertTrue(savedProduct.getImages().get(0).isPreviewImage());
+        assertEquals(Arrays.asList(city1, city2), savedProduct.getCities());
     }
 
     @Test
-    public void testGetUserByPrincipal() {
+    @DisplayName("Should throw exception when principal is null")
+    public void testSaveProduct_WhenPrincipalIsNull() {
+        Principal principal = null;
+        product1 = null;
+        List<Long> cityIds = new ArrayList<>();
+        MultipartFile file = mock(MultipartFile.class);
+
+        assertThrows(RuntimeException.class, () -> {
+            productService.saveProduct(principal, product1, cityIds, file);
+        });
+    }
+
+    @Test
+    @DisplayName("Should return user when principal is not null and user exists")
+    public void testGetUserByPrincipal_WhenPrincipalIsNotNullAndUserExists() {
         Principal principal = mock(Principal.class);
         when(principal.getName()).thenReturn("test@example.com");
 
-        when(userRepository.findByEmail("test@example.com")).thenReturn(user);
+        User user = new User();
+        user.setEmail("test@example.com");
 
-        User result = productService.getUserByPrincipal(principal);
+        when(userService.getUserByPrincipal(principal)).thenReturn(user);
+
+        User result = userService.getUserByPrincipal(principal);
         assertEquals(user, result);
-
-        result = productService.getUserByPrincipal(null);
-        assertNotNull(result);
-        assertEquals(new User(), result);
     }
 
     @Test
-    void testDeleteProduct() {
-        Product product = new Product();
-        product.setId(1L);
+    @DisplayName("Should throw exception when principal is null")
+    public void testGetUserByPrincipal_WhenPrincipalIsNull() {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            productService.getUserByPrincipal(null);
+        });
+        assertEquals("Principal is null and user does not exist", exception.getMessage());
+    }
 
-        when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
+    @Test
+    @DisplayName("Should delete product when it exists")
+    public void testDeleteProduct_WhenProductExists() {
+        when(productRepository.existsById(anyLong())).thenReturn(true);
 
         productService.deleteProduct(1L);
 
@@ -190,19 +298,34 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testGetProductById() {
-        Product product = new Product();
-        product.setId(1L);
-        product.setTitle("Test Product");
+    @DisplayName("Should throw exception when product does not exist")
+    public void testDeleteProduct_WhenProductDoesNotExist() {
+        when(productRepository.existsById(anyLong())).thenReturn(false);
 
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            productService.deleteProduct(1L);
+        });
+
+        assertEquals("Product with id: 1 does not exist", exception.getMessage());
+
+        verify(productRepository, times(0)).deleteById(anyLong());
+    }
+
+    @Test
+    @DisplayName("Should return product when product exists by given ID")
+    public void testGetProductById_WhenProductExists() {
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product1));
 
         Product result = productService.getProductById(1L);
-        assertEquals(product, result);
+        assertEquals(product1, result);
+    }
 
+    @Test
+    @DisplayName("Should return null when product does not exist by given ID")
+    public void testGetProductById_WhenProductDoesNotExist() {
         when(productRepository.findById(2L)).thenReturn(Optional.empty());
 
-        result = productService.getProductById(2L);
-        assertEquals(null, result);
+        Product result = productService.getProductById(2L);
+        assertNull(result);
     }
 }

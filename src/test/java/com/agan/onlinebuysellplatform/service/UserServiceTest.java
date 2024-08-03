@@ -5,6 +5,7 @@ import com.agan.onlinebuysellplatform.model.User;
 import com.agan.onlinebuysellplatform.model.enums.Role;
 import com.agan.onlinebuysellplatform.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -16,8 +17,8 @@ import java.security.Principal;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
 
@@ -51,7 +52,8 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testRegisterNewUser() throws Exception {
+    @DisplayName("Should save user with encoded password and send email when valid user is provided")
+    public void registerNewUser_WhenValidUserIsProvided() throws Exception {
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArgument(0));
 
@@ -65,11 +67,32 @@ public class UserServiceTest {
         assertEquals(Collections.singleton(Role.ROLE_USER), savedUser.getRoles());
         assertFalse(savedUser.isConfirmed());
         verify(userRepository, times(1)).save(any(User.class));
-        verify(emailService, times(1)).sendEmail(eq("test@example.com"), eq("Registration Confirmation"), anyString());
+        verify(emailService, times(1))
+                .sendEmail(eq("test@example.com"), eq("Registration Confirmation"), anyString());
     }
 
     @Test
-    public void testConfirmUser() throws Exception {
+    @DisplayName("Should throw exception when registering user fails")
+    public void testRegisterNewUser_WhenRegistrationFails() {
+        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+        when(userRepository.save(any(User.class))).thenThrow(new RuntimeException("Database error"));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            userService.registerNewUser(user);
+        });
+
+        String expectedMessage = "Database error";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+        verify(userRepository, times(1)).save(any(User.class));
+        verify(emailService, times(0))
+                .sendEmail(eq("test@example.com"), eq("Registration Confirmation"), anyString());
+    }
+
+    @Test
+    @DisplayName("Should confirm user when valid token is provided")
+    public void testConfirmUser_WhenValidTokenIsProvided() throws Exception {
         User user = new User();
         user.setEmail("test@example.com");
         user.setPassword("password");
@@ -86,7 +109,8 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testConfirmUserWithInvalidToken() {
+    @DisplayName("Should throw exception when invalid token is provided")
+    public void testConfirmUser_WhenInvalidTokenIsProvided() {
         when(userRepository.findByConfirmationToken("invalid-token")).thenReturn(null);
 
         Exception exception = assertThrows(Exception.class, () -> {
@@ -102,7 +126,8 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testBanUser() {
+    @DisplayName("Should ban user when user is active")
+    public void testBanUser_WhenUserIsActive() {
         user.setActive(true);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -114,19 +139,27 @@ public class UserServiceTest {
         User savedUser = userCaptor.getValue();
 
         assertFalse(savedUser.isActive());
+    }
 
+    @Test
+    @DisplayName("Should unban user when user is inactive")
+    public void testUnbanUser_WhenUserIsInactive() {
         user.setActive(false);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
         userService.banUser(1L);
 
-        verify(userRepository, times(2)).save(userCaptor.capture());
-        savedUser = userCaptor.getValue();
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(userCaptor.capture());
+        User savedUser = userCaptor.getValue();
 
         assertTrue(savedUser.isActive());
     }
 
     @Test
-    public void testChangeUserRoles() {
+    @DisplayName("Should update user roles when user is found")
+    public void testChangeUserRoles_WhenUserIsFound() {
         String[] newRoles = {"ROLE_ADMIN", "ROLE_USER"};
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -142,18 +175,27 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testChangeUserRoles_UserNotFound() {
+    @DisplayName("Should throw exception when user is not found for changing roles")
+    public void testChangeUserRoles_WhenUserIsNotFound() {
         String[] newRoles = {"ROLE_ADMIN", "ROLE_USER"};
 
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> {
+        Exception exception = assertThrows(UserNotFoundException.class, () -> {
             userService.changeUserRoles(1L, newRoles);
         });
+
+        String expectedMessage = "User not found";
+        String actualMessage = exception.getMessage();
+
+        assertFalse(actualMessage.contains(expectedMessage));
+        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(0)).save(any(User.class));
     }
 
     @Test
-    public void testGetUserByPrincipal() {
+    @DisplayName("Should return user when principal is not null and user exists")
+    public void testGetUserByPrincipal_WhenPrincipalIsNotNullAndUserExists() {
         Principal principal = mock(Principal.class);
         when(principal.getName()).thenReturn("test@example.com");
 
@@ -161,25 +203,71 @@ public class UserServiceTest {
 
         User result = userService.getUserByPrincipal(principal);
         assertEquals(user, result);
+    }
 
-        result = userService.getUserByPrincipal(null);
+    @Test
+    @DisplayName("Should return new user when principal is null")
+    public void testGetUserByPrincipal_WhenPrincipalIsNull() {
+        User result = userService.getUserByPrincipal(null);
         assertNotNull(result);
         assertEquals(new User(), result);
     }
 
     @Test
-    public void testGetUserById() {
-        // Test when user is found
+    @DisplayName("Should return null when principal is not null and user does not exist")
+    public void testGetUserByPrincipal_WhenPrincipalIsNotNullAndUserDoesNotExist() {
+        Principal principal = mock(Principal.class);
+        when(principal.getName()).thenReturn("test@example.com");
+
+        when(userRepository.findByEmail("test@example.com")).thenReturn(null);
+
+        User result = userService.getUserByPrincipal(principal);
+        assertNull(result);
+    }
+
+    @Test
+    @DisplayName("Should return user when user is found by ID")
+    public void testGetUserById_WhenUserIsFound() {
+        // Настраиваем репозиторий для возврата пользователя, когда он найден
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
         Optional<User> result = userService.getUserById(1L);
         assertTrue(result.isPresent());
         assertEquals(user, result.get());
+    }
 
-        // Test when user is not found
+    @Test
+    @DisplayName("Should return empty optional when user is not found by ID")
+    public void testGetUserById_WhenUserIsNotFound() {
+        // Настраиваем репозиторий для возврата пустого значения, когда пользователь не найден
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
 
-        result = userService.getUserById(2L);
+        Optional<User> result = userService.getUserById(2L);
         assertFalse(result.isPresent());
+    }
+
+    @Test
+    @DisplayName("Should return user when email exists")
+    void testFindUserByEmail_WhenEmailExists() {
+        User user = new User();
+        user.setEmail("test@example.com");
+
+        when(userRepository.findByEmail(anyString())).thenReturn(user);
+
+        User result = userService.findUserByEmail("test@example.com");
+
+        assertNotNull(result);
+        assertEquals("test@example.com", result.getEmail());
+        verify(userRepository, times(1)).findByEmail("test@example.com");
+    }
+
+    @Test
+    @DisplayName("Should throw RuntimeException when email is null")
+    void testFindUserByEmail_WhenEmailIsNull() {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            userService.findUserByEmail(null);
+        });
+
+        assertEquals("Email: null does not exist", exception.getMessage());
     }
 }
