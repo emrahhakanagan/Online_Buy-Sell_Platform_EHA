@@ -74,16 +74,15 @@ public class ProductService {
     public void saveProduct(Principal principal, Product product, List<Long> cityIds, MultipartFile... files) {
         product.setUser(getUserByPrincipal(principal));
 
-        List<Image> images = Arrays.stream(files)
+        Arrays.stream(files)
                 .filter(file -> file.getSize() != 0)
                 .map(this::toImageEntity)
-                .peek(image -> {
+                .forEach(image -> {
                     if (product.getImages().isEmpty()) {
                         image.setPreviewImage(true);
                     }
                     product.addImageToProduct(image);
-                })
-                .toList();
+                });
 
         List<GermanCity> cities = cityIds.stream()
                 .map(germanCityService::getCityById)
