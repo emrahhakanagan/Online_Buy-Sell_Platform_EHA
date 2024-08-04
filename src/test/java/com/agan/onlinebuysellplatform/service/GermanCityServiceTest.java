@@ -39,20 +39,20 @@ class GermanCityServiceTest {
     }
 
     @Test
-    @DisplayName("Should return list of cities")
-    public void testGetAllCities_ShouldReturnListOfCities() {
+    @DisplayName("Should return cities sorted by name")
+    public void testGetAllCities_ShouldReturnCitiesSortedByName() {
         GermanCity city2 = new GermanCity();
-        city2.setId(2L);
         city2.setCity_name("Munich");
+        GermanCity city3 = new GermanCity();
+        city3.setCity_name("Cologne");
 
-        when(germanCityRepository.findAll()).thenReturn(Arrays.asList(city, city2));
+        when(germanCityRepository.findAll()).thenReturn(Arrays.asList(city, city2, city3));
 
-        List<GermanCity> cities = germanCityService.getAllCities();
+        List<GermanCity> sortedCities = germanCityService.getAllCities();
 
-        assertNotNull(cities);
-        assertEquals(2, cities.size());
-        assertEquals("Berlin", cities.get(0).getCity_name());
-        assertEquals("Munich", cities.get(1).getCity_name());
+        assertEquals("Berlin", sortedCities.get(0).getCity_name());
+        assertEquals("Cologne", sortedCities.get(1).getCity_name());
+        assertEquals("Munich", sortedCities.get(2).getCity_name());
     }
 
     @Test
