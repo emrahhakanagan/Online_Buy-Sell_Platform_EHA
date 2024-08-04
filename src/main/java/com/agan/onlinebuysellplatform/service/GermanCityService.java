@@ -5,7 +5,9 @@ import com.agan.onlinebuysellplatform.repository.GermanCityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -13,7 +15,11 @@ public class GermanCityService {
     private final GermanCityRepository germanCityRepository;
 
     public List<GermanCity> getAllCities() {
-        return germanCityRepository.findAll();
+        List<GermanCity> germanCities = germanCityRepository.findAll();
+
+        return germanCities.stream()
+                .sorted(Comparator.comparing(GermanCity::getCity_name))
+                .collect(Collectors.toList());
     }
 
     public GermanCity getCityById(Long id) {
