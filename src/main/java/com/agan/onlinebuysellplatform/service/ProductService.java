@@ -99,9 +99,6 @@ public class ProductService {
     }
 
     public User getUserByPrincipal(Principal principal) {
-        if (principal == null) {
-            throw new RuntimeException("Principal is null and user does not exist");
-        }
         return userService.getUserByPrincipal(principal);
     }
 
