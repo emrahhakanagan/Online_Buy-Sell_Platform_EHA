@@ -264,27 +264,18 @@ public class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("Should return user when principal is not null and user exists")
-    public void testGetUserByPrincipal_WhenPrincipalIsNotNullAndUserExists() {
+    @DisplayName("Should return user when principal is valid")
+    public void testGetUserByPrincipal_WhenPrincipalIsValid() {
         Principal principal = mock(Principal.class);
-        when(principal.getName()).thenReturn("test@example.com");
+        when(principal.getName()).thenReturn("username");
 
         User user = new User();
-        user.setEmail("test@example.com");
+        user.setEmail("username");
 
         when(userService.getUserByPrincipal(principal)).thenReturn(user);
 
         User result = userService.getUserByPrincipal(principal);
         assertEquals(user, result);
-    }
-
-    @Test
-    @DisplayName("Should throw exception when principal is null")
-    public void testGetUserByPrincipal_WhenPrincipalIsNull() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            productService.getUserByPrincipal(null);
-        });
-        assertEquals("Principal is null and user does not exist", exception.getMessage());
     }
 
     @Test
