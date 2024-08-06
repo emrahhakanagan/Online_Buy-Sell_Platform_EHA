@@ -5,9 +5,10 @@ import com.agan.onlinebuysellplatform.repository.GermanCityRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class GermanCityServiceTest {
 
     @Mock
@@ -25,11 +27,6 @@ class GermanCityServiceTest {
     private GermanCityService germanCityService;
 
     private GermanCity city;
-
-    @BeforeEach
-    void setUpMocks() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @BeforeEach
     void setUpCity() {

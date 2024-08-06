@@ -1,18 +1,19 @@
 package com.agan.onlinebuysellplatform.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 
+@ExtendWith(MockitoExtension.class)
 public class EmailServiceTest {
 
     @Mock
@@ -20,11 +21,6 @@ public class EmailServiceTest {
 
     @InjectMocks
     private EmailService emailService;
-
-    @BeforeEach
-    public void setUpMocks() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     @DisplayName("Should send email with given details")

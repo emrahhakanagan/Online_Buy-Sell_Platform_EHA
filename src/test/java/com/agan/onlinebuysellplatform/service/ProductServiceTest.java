@@ -4,14 +4,14 @@ import com.agan.onlinebuysellplatform.model.GermanCity;
 import com.agan.onlinebuysellplatform.model.Product;
 import com.agan.onlinebuysellplatform.model.User;
 import com.agan.onlinebuysellplatform.repository.ProductRepository;
-import com.agan.onlinebuysellplatform.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class ProductServiceTest {
     @Mock
     private ProductRepository productRepository;
@@ -46,10 +47,10 @@ public class ProductServiceTest {
     private Product product1;
     private GermanCity germanCity;
 
-    @BeforeEach
-    void setUpMocks() {
-        MockitoAnnotations.openMocks(this);
-    }
+//    @BeforeEach
+//    void setUpMocks() {
+//        MockitoAnnotations.openMocks(this);
+//    }
 
     @BeforeEach
     void setUpProduct() {
@@ -217,12 +218,12 @@ public class ProductServiceTest {
     @DisplayName("Should save product when all inputs are valid")
     public void testSaveProduct_WhenAllInputsAreValid() throws Exception {
         Principal principal = mock(Principal.class);
-        when(principal.getName()).thenReturn("test@example.com");
+        lenient().when(principal.getName()).thenReturn("test@example.com");
 
         User user = new User();
         user.setEmail("test@example.com");
 
-        when(userService.getUserByPrincipal(principal)).thenReturn(user);
+        lenient().when(userService.getUserByPrincipal(principal)).thenReturn(user);
         when(productRepository.save(any(Product.class))).thenAnswer(i -> i.getArgument(0));
 
         MultipartFile file1 = mock(MultipartFile.class);
@@ -267,12 +268,12 @@ public class ProductServiceTest {
     @DisplayName("Should return user when principal is valid")
     public void testGetUserByPrincipal_WhenPrincipalIsValid() {
         Principal principal = mock(Principal.class);
-        when(principal.getName()).thenReturn("username");
+        lenient().when(principal.getName()).thenReturn("username");
 
         User user = new User();
         user.setEmail("username");
 
-        when(userService.getUserByPrincipal(principal)).thenReturn(user);
+        lenient().when(userService.getUserByPrincipal(principal)).thenReturn(user);
 
         User result = userService.getUserByPrincipal(principal);
         assertEquals(user, result);
