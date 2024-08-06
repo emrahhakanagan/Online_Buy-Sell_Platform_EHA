@@ -78,8 +78,7 @@ public class AdminControllerTest {
 
     @Test
     @DisplayName("Should return user-edit view with user details when user exists")
-    public void testUserEdit_Get() {
-        Long userId = 1L;
+    public void testUserEdit_Get_WhenUserExists() {
         String username = "admin";
         User user = new User();
         user.setId(userId);
@@ -90,7 +89,7 @@ public class AdminControllerTest {
         when(userService.getUserByPrincipal(any(Principal.class))).thenReturn(user);
 
         Principal principal = mock(Principal.class);
-        when(principal.getName()).thenReturn(username);
+        lenient().when(principal.getName()).thenReturn(username);
 
         Model model = mock(Model.class);
 
