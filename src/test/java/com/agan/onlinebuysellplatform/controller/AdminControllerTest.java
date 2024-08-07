@@ -91,7 +91,7 @@ public class AdminControllerTest {
         Principal principal = mock(Principal.class);
         lenient().when(principal.getName()).thenReturn(username);
 
-        Model model = mock(Model.class);
+        model = mock(Model.class);
 
         String viewName = adminController.userEdit(userId, model, principal);
 
