@@ -3,12 +3,11 @@
 # Online Buy-Sell Platform EHA
 #### in progress ...
 
-
 Online Buy-Sell Platform EHA is a web application designed for buying and selling products online. This platform offers user authentication via email, the ability to add products for sale, and facilitates the purchase of products. The project is built using Spring Boot and integrates several key functionalities to ensure a smooth user experience.
 
 ## Project Description
 
-Online Buy-Sell Platform EHA  is an online marketplace where users can register, list items for sale, and purchase items from other users. The platform supports:
+Online Buy-Sell Platform EHA is an online marketplace where users can register, list items for sale, and purchase items from other users. The platform supports:
 
 - **User Authentication**: Users can register and log in using their email addresses. Email verification is implemented for security.
 - **Product Management**: Users can add, edit, and delete their products. Each product can include images, descriptions, prices, and categories.
@@ -25,6 +24,10 @@ Online Buy-Sell Platform EHA  is an online marketplace where users can register,
 - **Freemarker**: Template engine for generating email content and rendering views.
 - **PostgreSQL**: Database for storing user and product information.
 - **Maven**: Build automation tool.
+- **JUnit 5**: Used for unit testing the application.
+- **Mockito**: Framework for creating mocks in unit tests.
+- **MockMvc**: Used for testing Spring MVC controllers.
+- **JaCoCo**: Java code coverage tool used to measure the percentage of code executed during tests.
 
 ## Getting Started
 
@@ -67,9 +70,31 @@ Ensure you have the following installed on your local machine:
 - **Browse Products**: View all products listed on the platform and search for items of interest.
 - **Purchase Product**: Buy a product listed by another user and receive email notifications for order status.
 
+## Testing
+
+### Running Tests
+
+To run unit and integration tests:
+
+```sh
+mvn test
+```
+
+### Test Coverage
+To generate a test coverage report using JaCoCo:
+
+```sh
+mvn jacoco:report
+```
+The report can be found at target/site/jacoco/index.html.
+
+## Continuous Integration
+For CI/CD, you can configure GitHub Actions or another CI tool to automatically run tests and generate reports on every commit.
+
 ## Contributing
 
-Contributions are welcome! If you have any suggestions or improvements, please fork the repository and create a pull request. For major changes, please open an issue first to discuss what you would like to change.
+Contributions are welcome! If you have any suggestions or improvements, please fork the repository and create a pull request. 
+For major changes, please open an issue first to discuss what you would like to change.
 
 
 ## Contact
