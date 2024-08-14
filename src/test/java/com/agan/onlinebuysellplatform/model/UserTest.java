@@ -4,6 +4,10 @@ import com.agan.onlinebuysellplatform.model.enums.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
@@ -13,9 +17,14 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DataJpaTest
+@ActiveProfiles("test")
 public class UserTest {
 
     private User user;
+
+    @Autowired
+    private TestEntityManager entityManager;
 
     @BeforeEach
     void setUp() {
@@ -189,5 +198,38 @@ public class UserTest {
         user.setActive(true);
         user.setConfirmed(true);
         assertTrue(user.isEnabled());
+    }
+
+    @Test
+    @DisplayName("Should return empty authorities when user has no roles")
+    public void testGetAuthorities_WhenNoRoles() {
+        user.setRoles(Collections.emptySet());
+        assertTrue(user.getAuthorities().isEmpty(), "Authorities should be empty when user has no roles");
+    }
+
+    @Test
+    @DisplayName("Should not be enabled when user is inactive")
+    public void testIsEnabled_WhenInactive() {
+        user.setActive(false);
+        user.setConfirmed(true);
+        assertFalse(user.isEnabled(), "User should not be enabled when inactive");
+    }
+
+    @Test
+    @DisplayName("Should not be enabled when user is not confirmed")
+    public void testIsEnabled_WhenNotConfirmed() {
+        user.setActive(true);
+        user.setConfirmed(false);
+        assertFalse(user.isEnabled(), "User should not be enabled when not confirmed");
+    }
+
+    @Test
+    @DisplayName("Should automatically initialize date of creation on pre persist")
+    public void testInit_AutoInitialization() {
+        user = new User();
+        assertNull(user.getDateOfCreated(), "Date of creation should be null before init");
+
+        entityManager.persist(user);
+        assertNotNull(user.getDateOfCreated(), "Date of creation should be initialized");
     }
 }
