@@ -32,7 +32,8 @@ public class Image {
     private boolean isPreviewImage;
 
     @Lob
-    @Column(name = "bytes", columnDefinition = "OID")
+//    @Column(name = "bytes", columnDefinition = "OID") // setup BLOB or OID in app-prop files
+    @Column(name = "bytes")
     private byte[] bytes;
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
