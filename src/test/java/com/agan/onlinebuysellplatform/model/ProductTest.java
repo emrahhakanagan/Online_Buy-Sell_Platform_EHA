@@ -29,7 +29,7 @@ public class ProductTest {
         assertNull(product.getDescription());
         assertNull(product.getPrice());
         assertTrue(product.getImages().isEmpty());
-        assertNull(product.getUser());
+        assertNotNull(product.getUser());
         assertNull(product.getPreviewImageId());
         assertNull(product.getDateOfCreated());
         assertTrue(product.getCities().isEmpty());
