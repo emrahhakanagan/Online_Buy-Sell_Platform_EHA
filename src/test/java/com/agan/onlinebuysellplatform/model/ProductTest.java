@@ -11,10 +11,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ProductTest {
 
     private Product product;
+    private User user;
 
     @BeforeEach
     public void setUp() {
         product = new Product();
+        user = new User();
+
+        product.setUser(user);
     }
 
     @Test
@@ -87,8 +91,6 @@ public class ProductTest {
     @Test
     @DisplayName("Should set and get user")
     public void testSetAndGetUser() {
-        User user = new User();
-        product.setUser(user);
         assertEquals(user, product.getUser());
     }
 
@@ -102,5 +104,16 @@ public class ProductTest {
 
         assertFalse(product.getCities().isEmpty());
         assertEquals(2, product.getCities().size());
+    }
+
+    @Test
+    @DisplayName("Should set and get user with correct association")
+    public void testSetAndGetUser_Association() {
+        assertEquals(user, product.getUser());
+
+        assertTrue(user.getProducts().isEmpty(), "User should not automatically have the product in products list");
+
+        user.getProducts().add(product);
+        assertTrue(user.getProducts().contains(product), "User should contain the product after adding it explicitly");
     }
 }
