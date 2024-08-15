@@ -2,6 +2,7 @@ package com.agan.onlinebuysellplatform.model;
 
 import com.agan.onlinebuysellplatform.model.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,12 +21,18 @@ public class User implements UserDetails {
     @Column(name = "id")
     private Long id;
 
+    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email cannot be blank")
     @Column(name = "email", unique = true, updatable = false)
     private String email;
 
+    @Pattern(regexp = "^[0-9]{10,15}$", message = "Phone number must contain only digits and be 10 to 15 characters long")
+    @NotBlank(message = "Phone number cannot be blank")
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Pattern(regexp = "^[A-Za-z]{2,50}$", message = "Name must contain only letters and be 2 to 50 characters long")
+    @NotBlank(message = "Name cannot be blank")
     @Column(name = "name")
     private String name;
 
@@ -36,8 +43,15 @@ public class User implements UserDetails {
     @JoinColumn(name = "image_id")
     private Image avatar;
 
+    @Size(min = 8, max = 20, message = "Password must be between 8 and 20 characters")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[A-Z]).{8,20}$", message = "Password must contain at least one digit and one uppercase letter")
+    @NotBlank(message = "Password cannot be blank")
     @Column(name = "password", length = 1000)
     private String password;
+
+    @Transient
+    @NotBlank(message = "Password confirmation cannot be blank")
+    private String passwordConfirmation;
 
     @Column(name = "confirmation_token")
     private String confirmationToken;
@@ -63,6 +77,11 @@ public class User implements UserDetails {
     }
 
     // security
+
+    @AssertTrue(message = "Password and password confirmation do not match")
+    public boolean isPasswordValid() {
+        return password.equals(passwordConfirmation);
+    }
 
     public boolean isAdmin() {
         return roles.contains(Role.ROLE_ADMIN);
