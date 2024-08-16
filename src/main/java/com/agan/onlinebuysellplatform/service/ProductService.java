@@ -74,15 +74,21 @@ public class ProductService {
     public void saveProduct(Principal principal, Product product, List<Long> cityIds, MultipartFile... files) {
         product.setUser(getUserByPrincipal(principal));
 
-        Arrays.stream(files)
-                .filter(file -> file.getSize() != 0)
+        List<Image> images = Arrays.stream(files)
+                .filter(file -> file != null && file.getSize() > 0)
                 .map(this::toImageEntity)
-                .forEach(image -> {
-                    if (product.getImages().isEmpty()) {
-                        image.setPreviewImage(true);
-                    }
-                    product.addImageToProduct(image);
-                });
+                .collect(Collectors.toList());
+
+        if (images.isEmpty()) {
+            setDefaultImage(product);
+        } else {
+            images.stream().
+                    findFirst().
+                    ifPresent(image -> image.setPreviewImage(true));
+
+            product.getImages().addAll(images);
+            product.setPreviewImageId(images.get(0).getId());
+        }
 
         List<GermanCity> cities = cityIds.stream()
                 .map(germanCityService::getCityById)
@@ -110,9 +116,9 @@ public class ProductService {
             List<GermanCity> cities = cityIds.stream()
                     .map(germanCityService::getCityById)
                     .collect(Collectors.toList());
+
             product.getCities().clear();
             product.getCities().addAll(cities);
-
 
             if (files != null && files.length > 0) {
                 product.getImages().clear();
@@ -123,14 +129,16 @@ public class ProductService {
                         .peek(image -> image.setProduct(product))
                         .collect(Collectors.toList());
 
-                images.stream()
-                        .findFirst()
-                        .ifPresent(image -> {
-                            image.setPreviewImage(true);
-                            product.setPreviewImageId(image.getId());
-                        });
+                if (!images.isEmpty()) {
+                    images.get(0).setPreviewImage(true);
+                    product.setPreviewImageId(images.get(0).getId());
+                } else {
+                    setDefaultImage(product);
+                }
 
                 product.getImages().addAll(images);
+            } else {
+                setDefaultImage(product);
             }
 
             productRepository.save(product);
@@ -150,6 +158,19 @@ public class ProductService {
         image.setSize(file.getSize());
         image.setBytes(file.getBytes());
         return image;
+    }
+
+    private void setDefaultImage(Product product) {
+        Image defaultImage = new Image();
+        defaultImage.setOriginalFileName("default-product.png");
+        defaultImage.setName("default-product");
+        defaultImage.setContentType("image/png");
+        defaultImage.setSize(0L);
+        defaultImage.setProduct(product);
+        defaultImage.setPreviewImage(true);
+
+        product.addImageToProduct(defaultImage);
+        product.setPreviewImageId(defaultImage.getId());
     }
 
     @Transactional
