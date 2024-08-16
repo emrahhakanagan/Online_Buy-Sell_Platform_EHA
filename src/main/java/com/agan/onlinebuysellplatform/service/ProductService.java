@@ -98,6 +98,45 @@ public class ProductService {
         productRepository.save(productFromDb);
     }
 
+    @Transactional
+    public void updateProduct(Long id, Principal principal, Product updatedProduct, List<Long> cityIds, MultipartFile... files) {
+        Product product = getProductById(id);
+
+        if (product != null && product.getUser().equals(getUserByPrincipal(principal))) {
+            product.setTitle(updatedProduct.getTitle());
+            product.setDescription(updatedProduct.getDescription());
+            product.setPrice(updatedProduct.getPrice());
+
+            List<GermanCity> cities = cityIds.stream()
+                    .map(germanCityService::getCityById)
+                    .collect(Collectors.toList());
+            product.getCities().clear();
+            product.getCities().addAll(cities);
+
+
+            if (files != null && files.length > 0) {
+                product.getImages().clear();
+
+                List<Image> images = Arrays.stream(files)
+                        .filter(file -> file != null && !file.isEmpty())
+                        .map(this::toImageEntity)
+                        .peek(image -> image.setProduct(product))
+                        .collect(Collectors.toList());
+
+                images.stream()
+                        .findFirst()
+                        .ifPresent(image -> {
+                            image.setPreviewImage(true);
+                            product.setPreviewImageId(image.getId());
+                        });
+
+                product.getImages().addAll(images);
+            }
+
+            productRepository.save(product);
+        }
+    }
+
     public User getUserByPrincipal(Principal principal) {
         return userService.getUserByPrincipal(principal);
     }
