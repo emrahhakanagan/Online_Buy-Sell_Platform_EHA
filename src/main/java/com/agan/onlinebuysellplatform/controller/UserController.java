@@ -2,13 +2,12 @@ package com.agan.onlinebuysellplatform.controller;
 
 import com.agan.onlinebuysellplatform.model.User;
 import com.agan.onlinebuysellplatform.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -57,7 +56,11 @@ public class UserController {
 
 
     @PostMapping("/registration")
-    public String createUser(User user, Model model) {
+    public String createUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "registration";
+        }
+
         try {
             userService.registerNewUser(user);
 

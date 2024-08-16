@@ -5,13 +5,12 @@ import com.agan.onlinebuysellplatform.model.User;
 import com.agan.onlinebuysellplatform.service.GermanCityService;
 import com.agan.onlinebuysellplatform.service.ProductService;
 import com.agan.onlinebuysellplatform.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
@@ -52,13 +51,44 @@ public class ProductController {
     }
 
     @PostMapping("/product/create")
-    public String createProduct(@RequestParam("file1") MultipartFile file1,
+    public String createProduct(Principal principal, Model model,
+                                @Valid @ModelAttribute("product") Product product, BindingResult bindingResult,
+                                @RequestParam("file1") MultipartFile file1,
                                 @RequestParam("file2") MultipartFile file2,
                                 @RequestParam("file3") MultipartFile file3,
-                                Product product,
-                                Principal principal,
                                 @RequestParam List<Long> cityIds) {
+        if (bindingResult.hasErrors()) {
+                model.addAttribute("cities", germanCityService.getAllCities());
+                return "add-product";
+        }
+
         productService.saveProduct(principal, product, cityIds, file1, file2, file3);
+        return "redirect:/my/products";
+    }
+
+    @GetMapping("/product/edit/{id}")
+    public String editProductForm(@PathVariable Long id, Model model, Principal principal) {
+        Product product = productService.getProductById(id);
+        if (product == null || !product.getUser().equals(userService.getUserByPrincipal(principal))) {
+            return "redirect:/my/products";
+        }
+        model.addAttribute("product", product);
+        model.addAttribute("cities", germanCityService.getAllCities());
+        return "edit-product";
+    }
+
+    @PostMapping("/product/edit/{id}")
+    public String editProduct(@PathVariable Long id, @Valid @ModelAttribute("product") Product product,
+                              BindingResult bindingResult, Principal principal, Model model,
+                              @RequestParam("cityIds") List<Long> cityIds,
+                              @RequestParam("file1") MultipartFile file1,
+                              @RequestParam("file2") MultipartFile file2,
+                              @RequestParam("file3") MultipartFile file3) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("cities", germanCityService.getAllCities());
+            return "edit-product";
+        }
+        productService.updateProduct(id, principal, product, cityIds, file1, file2, file3);
         return "redirect:/my/products";
     }
 
