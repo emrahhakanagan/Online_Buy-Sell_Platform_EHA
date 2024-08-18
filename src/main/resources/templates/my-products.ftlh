@@ -12,12 +12,13 @@
             <div class="form-group">
                 <label for="productName">Product Name</label>
                 <input type="text" required class="form-control"
-                       id="productName" name="title">
+                       id="productName" name="title" title="Please enter the product name">
             </div>
             <div class="form-group">
                 <label for="price">Price</label>
                 <div class="input-group mb-3">
-                    <input type="number" required class="form-control" id="price" name="price">
+                    <input type="number" required class="form-control" id="price" name="price"
+                           title="Please enter a valid price">
                     <div class="input-group-append">
                         <span class="input-group-text">€</span>
                     </div>
@@ -25,7 +26,8 @@
             </div>
             <div class="form-group">
                 <label for="cities">Cities</label>
-                <select id="cities" required name="cityIds" class="form-control" multiple>
+                <select id="cities" required name="cityIds" class="form-control" multiple
+                        title="Please select at least one city">
                     <option value="">The city is not selected</option>
                     <#list germanCities as city>
                         <option value="${city.id}">${city.city_name}</option>
@@ -34,7 +36,8 @@
             </div>
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea required class="form-control" id="description" name="description"></textarea>
+                <textarea required class="form-control" id="description" name="description"
+                          title="Please enter a description"></textarea>
             </div>
             <div class="form-group">
                 <div class="custom-file">
@@ -63,7 +66,12 @@
         <#list products as product>
             <a href="/product/${product.id}" class="product-link">
                 <div class="card text-white bg-dark my-3 product">
-                    <div class="card-top">
+                    <div style="display: flex; justify-content: space-between;">
+                        <form action="/product/edit/${product.id}" method="get" style="display: inline-block;">
+                            <button type="submit" class="btn btn-warning m-3">
+                                Edit
+                            </button>
+                        </form>
                         <form action="/product/delete/${product.id}" method="post">
                             <input type="hidden" name="_csrf" value="${_csrf.token}"/>
                             <button type="submit" class="btn btn-danger m-3">

@@ -46,6 +46,8 @@
         <a href="/user/${authorProduct.id}">
             <img src="/static/images/avatar.png" alt="mdo" width="32" height="32" class="rounded-circle"> ${authorProduct.name}
         </a>
+        <br>
+        <a href="javascript:history.back()" class="btn btn-secondary mt-3">Back</a>
     </p>
 
 </@t.template>

@@ -129,16 +129,10 @@ public class ProductService {
                         .peek(image -> image.setProduct(product))
                         .collect(Collectors.toList());
 
-                if (!images.isEmpty()) {
-                    images.get(0).setPreviewImage(true);
-                    product.setPreviewImageId(images.get(0).getId());
-                } else {
-                    setDefaultImage(product);
-                }
+                images.get(0).setPreviewImage(true);
+                product.setPreviewImageId(images.get(0).getId());
 
                 product.getImages().addAll(images);
-            } else {
-                setDefaultImage(product);
             }
 
             productRepository.save(product);

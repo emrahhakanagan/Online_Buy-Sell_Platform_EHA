@@ -51,11 +51,11 @@ public class ProductController {
     }
 
     @PostMapping("/product/create")
-    public String createProduct(Principal principal, Model model,
-                                @Valid @ModelAttribute("product") Product product, BindingResult bindingResult,
-                                @RequestParam("file1") MultipartFile file1,
-                                @RequestParam("file2") MultipartFile file2,
-                                @RequestParam("file3") MultipartFile file3,
+    public String createProduct(@Valid @ModelAttribute("product") Product product, BindingResult bindingResult,
+                                Principal principal, Model model,
+                                @RequestParam(value = "file1", required = false) MultipartFile file1,
+                                @RequestParam(value = "file2", required = false) MultipartFile file2,
+                                @RequestParam(value = "file3", required = false) MultipartFile file3,
                                 @RequestParam List<Long> cityIds) {
         if (bindingResult.hasErrors()) {
                 model.addAttribute("cities", germanCityService.getAllCities());
@@ -74,6 +74,8 @@ public class ProductController {
         }
         model.addAttribute("product", product);
         model.addAttribute("cities", germanCityService.getAllCities());
+        model.addAttribute("user", userService.getUserByPrincipal(principal));
+        model.addAttribute("images", product.getImages());
         return "edit-product";
     }
 
@@ -85,6 +87,7 @@ public class ProductController {
                               @RequestParam("file2") MultipartFile file2,
                               @RequestParam("file3") MultipartFile file3) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("bindingResult", bindingResult);
             model.addAttribute("cities", germanCityService.getAllCities());
             return "edit-product";
         }
@@ -102,6 +105,7 @@ public class ProductController {
     @GetMapping("/my/products")
     public String userProducts(Principal principal, Model model) {
         User user = productService.getUserByPrincipal(principal);
+
         model.addAttribute("user", user);
         model.addAttribute("products", user.getProducts());
         model.addAttribute("germanCities", germanCityService.getAllCities());
