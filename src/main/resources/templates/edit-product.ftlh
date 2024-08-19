@@ -46,19 +46,28 @@
             <textarea required class="form-control" id="description" name="description">${product.description}</textarea>
         </div>
 
-        <#list product.images as image>
-            <div>
-                <img src="/images/${image.id}" alt="Image ${image.id}" width="150px" height="150px">
-                <input type="file" name="file${image?index + 1}" id="file${image?index + 1}">
-            </div>
-        </#list>
-
-        <#if (product.images?size < 3)>
-            <#list 1..(3 - product.images?size) as i>
-                <!-- Здесь отображаем только поле для загрузки новых файлов, т.к. новых изображений еще нет -->
-                <input type="file" name="file${product.images?size + i}" id="file${product.images?size + i}">
+        <#if images?size == 1>
+            <#list images as image>
+                <div>
+                    <img src="/images/${product.previewImageId}" alt="Image ${product.previewImageId}" width="150px" height="150px">
+                    <input type="file" name="file${image?index + 1}" id="file${image?index + 1}">
+                </div>
             </#list>
         </#if>
+
+<#--        <#list product.images as image>-->
+<#--            <div>-->
+<#--                <img src="/images/${image.id}" alt="Image ${image.id}" width="150px" height="150px">-->
+<#--                <input type="file" name="file${image?index + 1}" id="file${image?index + 1}">-->
+<#--            </div>-->
+<#--        </#list>-->
+
+<#--        <#if (product.images?size < 3)>-->
+<#--            <#list 1..(3 - product.images?size) as i>-->
+<#--                <!-- Здесь отображаем только поле для загрузки новых файлов, т.к. новых изображений еще нет &ndash;&gt;-->
+<#--                <input type="file" name="file${product.images?size + i}" id="file${product.images?size + i}">-->
+<#--            </#list>-->
+<#--        </#if>-->
 
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
         <button type="submit" style="width: 100%" class="btn btn-dark">Update</button>
