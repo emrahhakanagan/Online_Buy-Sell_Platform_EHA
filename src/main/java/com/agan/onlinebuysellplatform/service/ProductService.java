@@ -4,6 +4,7 @@ import com.agan.onlinebuysellplatform.model.GermanCity;
 import com.agan.onlinebuysellplatform.model.Image;
 import com.agan.onlinebuysellplatform.model.Product;
 import com.agan.onlinebuysellplatform.model.User;
+import com.agan.onlinebuysellplatform.repository.ImageRepository;
 import com.agan.onlinebuysellplatform.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -24,6 +25,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final GermanCityService germanCityService;
     private final UserService userService;
+    private final ImageRepository imageRepository;
 
     public List<Product> listProducts(String title) {
         if (title != null) return productRepository.findByTitle(title);
@@ -99,13 +101,17 @@ public class ProductService {
         log.info("Saving new Product. Title: {}; Author email: {}", product.getTitle(), product.getUser().getEmail());
 
         Product productFromDb = productRepository.save(product);
+
+        log.info("==> Preview image ID: {}", product.getImages().get(0).getId());
+
         productFromDb.setPreviewImageId(productFromDb.getImages().get(0).getId());
 
         productRepository.save(productFromDb);
     }
 
     @Transactional
-    public void updateProduct(Long id, Principal principal, Product updatedProduct, List<Long> cityIds, MultipartFile... files) {
+    public void updateProduct(Long id, Principal principal, Product updatedProduct, List<Long> cityIds,
+                              MultipartFile... files) {
         Product product = getProductById(id);
 
         if (product != null && product.getUser().equals(getUserByPrincipal(principal))) {
@@ -121,22 +127,28 @@ public class ProductService {
             product.getCities().addAll(cities);
 
             if (files != null && files.length > 0) {
-                product.getImages().clear();
 
                 List<Image> images = Arrays.stream(files)
                         .filter(file -> file != null && !file.isEmpty())
                         .map(this::toImageEntity)
-                        .peek(image -> image.setProduct(product))
+                        .peek(image -> {
+                            image.setProduct(product);
+
+                        })
                         .collect(Collectors.toList());
 
+                imageRepository.deleteByProductId(product.getId());
                 images.get(0).setPreviewImage(true);
-                product.setPreviewImageId(images.get(0).getId());
 
                 product.getImages().addAll(images);
-            }
+                productRepository.save(product);
+                log.info("==> UPDATE PROGRESS Preview image ID: {}", product.getImages().get(0).getId());
 
-            productRepository.save(product);
+                product.setPreviewImageId(product.getImages().get(0).getId());
+                productRepository.save(product);
+            }
         }
+
     }
 
     public User getUserByPrincipal(Principal principal) {
@@ -156,8 +168,8 @@ public class ProductService {
 
     private void setDefaultImage(Product product) {
         Image defaultImage = new Image();
-        defaultImage.setOriginalFileName("default-product.png");
         defaultImage.setName("default-product");
+        defaultImage.setOriginalFileName("default-product.png");
         defaultImage.setContentType("image/png");
         defaultImage.setSize(0L);
         defaultImage.setProduct(product);
