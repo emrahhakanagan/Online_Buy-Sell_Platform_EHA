@@ -17,6 +17,7 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @Slf4j
@@ -112,44 +113,78 @@ public class ProductService {
     @Transactional
     public void updateProduct(Long id, Principal principal, Product updatedProduct, List<Long> cityIds,
                               MultipartFile... files) {
-        Product product = getProductById(id);
+        try {
+            Product product = getProductById(id);
 
-        if (product != null && product.getUser().equals(getUserByPrincipal(principal))) {
-            product.setTitle(updatedProduct.getTitle());
-            product.setDescription(updatedProduct.getDescription());
-            product.setPrice(updatedProduct.getPrice());
+            if (product != null && product.getUser().equals(getUserByPrincipal(principal))) {
+                product.setTitle(updatedProduct.getTitle());
+                product.setDescription(updatedProduct.getDescription());
+                product.setPrice(updatedProduct.getPrice());
 
-            List<GermanCity> cities = cityIds.stream()
-                    .map(germanCityService::getCityById)
-                    .collect(Collectors.toList());
-
-            product.getCities().clear();
-            product.getCities().addAll(cities);
-
-            if (files != null && files.length > 0) {
-
-                List<Image> images = Arrays.stream(files)
-                        .filter(file -> file != null && !file.isEmpty())
-                        .map(this::toImageEntity)
-                        .peek(image -> {
-                            image.setProduct(product);
-
-                        })
+                List<GermanCity> cities = cityIds.stream()
+                        .map(germanCityService::getCityById)
                         .collect(Collectors.toList());
 
-                imageRepository.deleteByProductId(product.getId());
-                images.get(0).setPreviewImage(true);
+                product.getCities().clear();
+                product.getCities().addAll(cities);
 
-                product.getImages().addAll(images);
-                productRepository.save(product);
-                log.info("==> UPDATE PROGRESS Preview image ID: {}", product.getImages().get(0).getId());
+                if (files != null && files.length > 0) {
 
-                product.setPreviewImageId(product.getImages().get(0).getId());
-                productRepository.save(product);
+                    List<Image> images = IntStream.range(0, files.length)
+                            .filter(i -> files[i] != null && !files[i].isEmpty())
+                            .mapToObj(i -> {
+                                Image image = toImageEntity(files[i]);
+                                image.setProduct(product);
+                                if (i == 0) {
+                                    image.setPreviewImage(true);
+                                } else {
+                                    image.setPreviewImage(false);
+                                }
+                                return image;
+                            })
+                            .collect(Collectors.toList());
+
+                    List<Image> existingImages = product.getImages();
+
+                    for (int i = 0; i < files.length; i++) {
+                        MultipartFile file = files[i];
+
+                        if (file != null && !file.isEmpty()) {
+                            Image newImage = toImageEntity(file);
+                            newImage.setProduct(product);
+
+                            // Сохраняем новое изображение перед установкой превью
+                            imageRepository.save(newImage);
+                            log.info("====>> ID OF NEW IMAGE: {}", newImage.getId());
+
+                            if (i < existingImages.size()) {
+                                Image oldImage = existingImages.get(i);
+                                imageRepository.delete(oldImage);
+                                existingImages.set(i, newImage);
+                            } else {
+                                existingImages.add(newImage);
+                            }
+
+                            if (i == 0) {
+                                newImage.setPreviewImage(true);
+                                product.setPreviewImageId(newImage.getId());
+                            } else {
+                                newImage.setPreviewImage(false);
+                            }
+                        }
+                    }
+
+                    productRepository.save(product);
+                    log.info("Preview image ID before saving: {}", product.getPreviewImageId());
+                }
             }
-        }
 
+        } catch (Exception e) {
+            log.error("Error during product update", e);
+            throw e;
+        }
     }
+
 
     public User getUserByPrincipal(Principal principal) {
         return userService.getUserByPrincipal(principal);
