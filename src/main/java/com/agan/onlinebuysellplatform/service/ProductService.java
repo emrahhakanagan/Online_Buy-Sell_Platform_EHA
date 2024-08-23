@@ -117,6 +117,7 @@ public class ProductService {
             Product product = getProductById(id);
 
             if (product != null && product.getUser().equals(getUserByPrincipal(principal))) {
+                log.info("Product found, updating details...");
                 product.setTitle(updatedProduct.getTitle());
                 product.setDescription(updatedProduct.getDescription());
                 product.setPrice(updatedProduct.getPrice());
@@ -128,54 +129,71 @@ public class ProductService {
                 product.getCities().clear();
                 product.getCities().addAll(cities);
 
+                // Получаем список существующих изображений продукта
+                List<Image> existingImages = product.getImages();
+
+                // Обрабатываем файлы из фронтенда
                 if (files != null && files.length > 0) {
+                    log.info("Processing files...");
 
-                    List<Image> images = IntStream.range(0, files.length)
-                            .filter(i -> files[i] != null && !files[i].isEmpty())
-                            .mapToObj(i -> {
-                                Image image = toImageEntity(files[i]);
-                                image.setProduct(product);
-                                if (i == 0) {
-                                    image.setPreviewImage(true);
-                                } else {
-                                    image.setPreviewImage(false);
-                                }
-                                return image;
-                            })
-                            .collect(Collectors.toList());
+                    int minSize = Math.min(files.length, existingImages.size());
 
-                    List<Image> existingImages = product.getImages();
-
-                    for (int i = 0; i < files.length; i++) {
+                    // Обновляем существующие изображения
+                    for (int i = 0; i < minSize; i++) {
                         MultipartFile file = files[i];
 
                         if (file != null && !file.isEmpty()) {
+                            log.info("Updating existing image at index {}", i);
                             Image newImage = toImageEntity(file);
                             newImage.setProduct(product);
 
-                            // Сохраняем новое изображение перед установкой превью
                             imageRepository.save(newImage);
-                            log.info("====>> ID OF NEW IMAGE: {}", newImage.getId());
+                            log.info("Saved new image with ID: {}", newImage.getId());
 
-                            if (i < existingImages.size()) {
-                                Image oldImage = existingImages.get(i);
-                                imageRepository.delete(oldImage);
-                                existingImages.set(i, newImage);
-                            } else {
-                                existingImages.add(newImage);
-                            }
+                            Image oldImage = existingImages.get(i);
+                            imageRepository.delete(oldImage);
+                            existingImages.set(i, newImage);
 
+                            // Устанавливаем превью для первого изображения
                             if (i == 0) {
                                 newImage.setPreviewImage(true);
                                 product.setPreviewImageId(newImage.getId());
+                                log.info("Set preview image ID: {}", newImage.getId());
                             } else {
                                 newImage.setPreviewImage(false);
                             }
                         }
                     }
 
+                    // Добавляем новые изображения, если их больше, чем существующих
+                    for (int i = existingImages.size(); i < files.length; i++) {
+                        MultipartFile file = files[i];
+
+                        if (file != null && !file.isEmpty()) {
+                            log.info("Adding new image at index {}", i);
+                            Image newImage = toImageEntity(file);
+                            newImage.setProduct(product);
+
+                            imageRepository.save(newImage);
+                            log.info("Saved new image with ID: {}", newImage.getId());
+
+                            existingImages.add(newImage);
+
+                            // Устанавливаем превью для первого изображения
+                            if (i == 0) {
+                                newImage.setPreviewImage(true);
+                                product.setPreviewImageId(newImage.getId());
+                                log.info("Set preview image ID: {}", newImage.getId());
+                            } else {
+                                newImage.setPreviewImage(false);
+                            }
+                        }
+                    }
+
+                    // Обновляем продукт с новыми и старыми изображениями
+                    product.setImages(existingImages);
                     productRepository.save(product);
-                    log.info("Preview image ID before saving: {}", product.getPreviewImageId());
+                    log.info("Product saved successfully with updated images.");
                 }
             }
 
@@ -184,6 +202,8 @@ public class ProductService {
             throw e;
         }
     }
+
+
 
 
     public User getUserByPrincipal(Principal principal) {
