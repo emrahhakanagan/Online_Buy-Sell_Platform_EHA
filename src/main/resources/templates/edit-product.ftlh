@@ -51,6 +51,11 @@
                 <div>
                     <img src="/images/${product.previewImageId}" alt="Image ${product.previewImageId}" width="150px" height="150px">
                     <input type="file" name="file1" id="file1">
+                    <form action="/delete-image/${image.id}" method="post" style="display:inline;">
+                        <button type="submit" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+                            Delete
+                        </button>
+                    </form>
                 </div>
 
             <#list 2..3 as i>
@@ -63,6 +68,11 @@
                 <div>
                     <img src="/images/${image.id}" alt="Image ${image.id}" width="150px" height="150px">
                     <input type="file" name="file${image?index + 1}" id="file${image?index + 1}">
+                    <form action="/delete-image/${image.id}" method="post" style="display:inline;">
+                        <button type="submit" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+                            Delete
+                        </button>
+                    </form>
                 </div>
             </#list>
              <#list 1..(3 - images?size) as i>
