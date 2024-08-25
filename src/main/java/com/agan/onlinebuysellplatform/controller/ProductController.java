@@ -83,15 +83,13 @@ public class ProductController {
     public String editProduct(@PathVariable Long id, @Valid @ModelAttribute("product") Product product,
                               BindingResult bindingResult, Principal principal, Model model,
                               @RequestParam("cityIds") List<Long> cityIds,
-                              @RequestParam("file1") MultipartFile file1,
-                              @RequestParam("file2") MultipartFile file2,
-                              @RequestParam("file3") MultipartFile file3) {
+                              @RequestParam("files") MultipartFile... files) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("bindingResult", bindingResult);
             model.addAttribute("cities", germanCityService.getAllCities());
             return "edit-product";
         }
-        productService.updateProduct(id, principal, product, cityIds, file1, file2, file3);
+        productService.updateProduct(id, principal, product, cityIds, files);
         return "redirect:/my/products";
     }
 
