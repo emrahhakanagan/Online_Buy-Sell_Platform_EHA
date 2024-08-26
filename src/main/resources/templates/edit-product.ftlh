@@ -58,7 +58,7 @@
 <#--                    </form>-->
                 </div>
 
-            <#list 2..3 as i>
+            <#list 2..imagesLimit as i>
                 <div>
                     <input type="file" name="files" id="file${i}">
                 </div>
@@ -77,8 +77,9 @@
 <#--                    </form>-->
                 </div>
             </#list>
-             <#if images?size != 3>
-                 <#list 1..(3 - images?size) as i>
+             <#if images?size != imagesLimit>
+
+                 <#list 1..(imagesLimit - images?size) as i>
                      <div>
                          <input type="file" name="files" id="file${images?size + i}">
                      </div>
