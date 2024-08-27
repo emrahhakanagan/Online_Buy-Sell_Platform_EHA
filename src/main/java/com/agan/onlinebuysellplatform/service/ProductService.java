@@ -17,7 +17,6 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 @Slf4j
@@ -129,16 +128,13 @@ public class ProductService {
                 product.getCities().clear();
                 product.getCities().addAll(cities);
 
-                // Получаем список существующих изображений продукта
                 List<Image> existingImages = product.getImages();
 
-                // Обрабатываем файлы из фронтенда
                 if (files != null && files.length > 0) {
                     log.info("Processing files...");
 
                     int minSize = Math.min(files.length, existingImages.size());
 
-                    // Обновляем существующие изображения
                     for (int i = 0; i < minSize; i++) {
                         MultipartFile file = files[i];
 
@@ -154,7 +150,6 @@ public class ProductService {
                             imageRepository.delete(oldImage);
                             existingImages.set(i, newImage);
 
-                            // Устанавливаем превью для первого изображения
                             if (i == 0) {
                                 newImage.setPreviewImage(true);
                                 product.setPreviewImageId(newImage.getId());
@@ -165,7 +160,6 @@ public class ProductService {
                         }
                     }
 
-                    // Добавляем новые изображения, если их больше, чем существующих
                     for (int i = existingImages.size(); i < files.length; i++) {
                         MultipartFile file = files[i];
 
@@ -179,7 +173,6 @@ public class ProductService {
 
                             existingImages.add(newImage);
 
-                            // Устанавливаем превью для первого изображения
                             if (i == 0) {
                                 newImage.setPreviewImage(true);
                                 product.setPreviewImageId(newImage.getId());
@@ -190,7 +183,6 @@ public class ProductService {
                         }
                     }
 
-                    // Обновляем продукт с новыми и старыми изображениями
                     product.setImages(existingImages);
                     productRepository.save(product);
                     log.info("Product saved successfully with updated images.");
@@ -202,9 +194,6 @@ public class ProductService {
             throw e;
         }
     }
-
-
-
 
     public User getUserByPrincipal(Principal principal) {
         return userService.getUserByPrincipal(principal);
