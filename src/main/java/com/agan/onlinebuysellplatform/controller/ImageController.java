@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.ByteArrayInputStream;
@@ -49,4 +50,15 @@ public class ImageController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Image not found");
         }
     }
+
+    @PostMapping("/delete-image/{id}")
+    public ResponseEntity<?> deleteImage(@PathVariable Long id) {
+        try {
+            imageService.deleteImageById(id);  // Логика удаления изображения
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }

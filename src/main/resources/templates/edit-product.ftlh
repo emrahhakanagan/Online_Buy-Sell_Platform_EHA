@@ -51,11 +51,10 @@
                 <div>
                     <img src="/images/${product.previewImageId}" alt="Image ${product.previewImageId}" width="150px" height="150px">
                     <input type="file" name="files" id="file1">
-<#--                    <form action="/delete-image/${product.previewImageId}" method="post" style="display:inline;">-->
-<#--                        <button type="submit" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">-->
-<#--                            Delete-->
-<#--                        </button>-->
-<#--                    </form>-->
+                    <button type="button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
+                            onclick="deleteImage(${image.id})">
+                        Delete
+                    </button>
                 </div>
 
             <#list 2..imagesLimit as i>
@@ -70,11 +69,10 @@
                 <div>
                     <img src="/images/${image.id}" alt="Image ${image.id}" width="150px" height="150px">
                     <input type="file" name="files" id="file${image?index + 1}">
-<#--                    <form action="/delete-image/${image.id}" method="post" style="display:inline;">-->
-<#--                        <button type="submit" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;">-->
-<#--                            Delete-->
-<#--                        </button>-->
-<#--                    </form>-->
+                    <button type="button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
+                            onclick="deleteImage(${image.id})">
+                        Delete
+                    </button>
                 </div>
             </#list>
              <#if images?size != imagesLimit>
@@ -91,4 +89,24 @@
         <button type="submit" style="width: 100%" class="btn btn-dark">Update</button>
     </form>
     <a href="/my/products" class="btn btn-secondary mt-3">Back</a>
+
+    <script>
+        function deleteImage(imageId) {
+            if (confirm('Are you sure you want to delete this image?')) {
+                fetch(`/delete-image/${imageId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRF-TOKEN': '${_csrf.token}' // если требуется CSRF токен
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Failed to delete image.');
+                    }
+                });
+            }
+        }
+    </script>
 </@t.template>
