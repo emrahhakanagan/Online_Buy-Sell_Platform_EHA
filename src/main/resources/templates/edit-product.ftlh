@@ -46,45 +46,38 @@
             <textarea required class="form-control" id="description" name="description">${product.description}</textarea>
         </div>
 
-        <#if images?size == 1>
+        <#if product.previewImageId??>
+            <div>
+                <img src="/images/${product.previewImageId}" alt="Preview Image" width="150px" height="150px">
+                <input type="file" name="files" id="file1">
+                <button type="button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
+                        onclick="deleteImage(${product.previewImageId})">
+                    Delete
+                </button>
+            </div>
+        </#if>
 
+        <!-- Отображение остальных изображений -->
+        <#list product.images as image>
+            <#if image.id != product.previewImageId>
                 <div>
-                    <img src="/images/${product.previewImageId}" alt="Image ${product.previewImageId}" width="150px" height="150px">
-                    <input type="file" name="files" id="file1">
+                    <img src="/images/${image.id}" alt="Image ${image.id}" width="150px" height="150px">
+                    <input type="file" name="files" id="file${image?index + 2}">
                     <button type="button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                            onclick="deleteImage(${product.previewImageId})">
+                            onclick="deleteImage(${image.id})">
                         Delete
                     </button>
                 </div>
+            </#if>
+        </#list>
 
-            <#list 2..imagesLimit as i>
+        <!-- Добавление новых изображений, если их меньше лимита -->
+        <#if product.images?size < imagesLimit>
+            <#list 1..(imagesLimit - product.images?size) as i>
                 <div>
-                    <input type="file" name="files" id="file${i}">
+                    <input type="file" name="files" id="file${product.images?size + i}">
                 </div>
             </#list>
-
-         <#else>
-
-            <#list images as image>
-                <#if image??>
-                    <div>
-                        <img src="/images/${image.id}" alt="Image ${image.id}" width="150px" height="150px">
-                        <input type="file" name="files" id="file${image?index + 1}">
-                        <button type="button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                                onclick="deleteImage(${image.id})">
-                            Delete
-                        </button>
-                    </div>
-                </#if>
-            </#list>
-             <#if images?size != imagesLimit>
-
-                 <#list 1..(imagesLimit - images?size) as i>
-                     <div>
-                         <input type="file" name="files" id="file${images?size + i}">
-                     </div>
-                 </#list>
-             </#if>
         </#if>
 
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
