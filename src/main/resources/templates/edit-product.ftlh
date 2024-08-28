@@ -52,7 +52,7 @@
                     <img src="/images/${product.previewImageId}" alt="Image ${product.previewImageId}" width="150px" height="150px">
                     <input type="file" name="files" id="file1">
                     <button type="button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                            onclick="deleteImage(${image.id})">
+                            onclick="deleteImage(${product.previewImageId})">
                         Delete
                     </button>
                 </div>
@@ -66,14 +66,16 @@
          <#else>
 
             <#list images as image>
-                <div>
-                    <img src="/images/${image.id}" alt="Image ${image.id}" width="150px" height="150px">
-                    <input type="file" name="files" id="file${image?index + 1}">
-                    <button type="button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                            onclick="deleteImage(${image.id})">
-                        Delete
-                    </button>
-                </div>
+                <#if image??>
+                    <div>
+                        <img src="/images/${image.id}" alt="Image ${image.id}" width="150px" height="150px">
+                        <input type="file" name="files" id="file${image?index + 1}">
+                        <button type="button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
+                                onclick="deleteImage(${image.id})">
+                            Delete
+                        </button>
+                    </div>
+                </#if>
             </#list>
              <#if images?size != imagesLimit>
 
