@@ -46,62 +46,57 @@
             <textarea required class="form-control" id="description" name="description">${product.description}</textarea>
         </div>
 
-        <#if product.previewImageId??>
-            <div>
-                <img src="/images/${product.previewImageId}" alt="Preview Image" width="150px" height="150px">
-                <input type="file" name="files" id="file1">
-                <button type="button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                        onclick="deleteImage(${product.previewImageId})">
-                    Delete
-                </button>
-            </div>
-        </#if>
-
-        <!-- Отображение остальных изображений -->
-        <#list product.images as image>
-            <#if image.id != product.previewImageId>
-                <div>
-                    <img src="/images/${image.id}" alt="Image ${image.id}" width="150px" height="150px">
-                    <input type="file" name="files" id="file${image?index + 2}">
-                    <button type="button" style="background-color: red; color: white; border: none; padding: 5px 10px; cursor: pointer;"
-                            onclick="deleteImage(${image.id})">
+        <!-- Контейнер для изображений -->
+        <div id="images-container">
+            <#list images as image>
+                <div class="image-block" id="image-${image.id}">
+                    <img src="/images/${image.id}" alt="Image ${image.id}" class="img-thumbnail" width="150px" height="150px">
+                    <input type="file" name="files" id="file${image?index + 2}" class="form-control-file mt-2">
+                    <button type="button" class="btn btn-danger mt-2 delete-button" data-image-id="${image.id}">
                         Delete
                     </button>
                 </div>
-            </#if>
-        </#list>
+            </#list>
+        </div>
 
         <!-- Добавление новых изображений, если их меньше лимита -->
         <#if product.images?size < imagesLimit>
             <#list 1..(imagesLimit - product.images?size) as i>
-                <div>
-                    <input type="file" name="files" id="file${product.images?size + i}">
+                <div class="form-group mt-2">
+                    <input type="file" name="files" id="file${product.images?size + i}" class="form-control-file">
                 </div>
             </#list>
         </#if>
 
         <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <button type="submit" style="width: 100%" class="btn btn-dark">Update</button>
+        <button type="submit" style="width: 100%" class="btn btn-dark mt-3">Update</button>
     </form>
     <a href="/my/products" class="btn btn-secondary mt-3">Back</a>
 
+    <!-- jQuery и Ajax для удаления изображений -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function deleteImage(imageId) {
-            if (confirm('Are you sure you want to delete this image?')) {
-                fetch(`/delete-image/${imageId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRF-TOKEN': '${_csrf.token}' // если требуется CSRF токен
-                    }
-                }).then(response => {
-                    if (response.ok) {
-                        location.reload();
-                    } else {
-                        alert('Failed to delete image.');
-                    }
-                });
-            }
-        }
+        $(document).ready(function() {
+            $('.delete-button').on('click', function() {
+                var imageId = $(this).data('image-id');
+                if (confirm('Are you sure you want to delete this image?')) {
+                    $.ajax({
+                        url: '/delete-image/' + imageId,
+                        type: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '${_csrf.token}'
+                        },
+                        success: function(result) {
+                            $('#image-' + imageId).remove();  // Удаляем элемент из DOM
+                            alert('Image deleted successfully.');
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error during fetch:', error);
+                            alert('Failed to delete image.');
+                        }
+                    });
+                }
+            });
+        });
     </script>
 </@t.template>
