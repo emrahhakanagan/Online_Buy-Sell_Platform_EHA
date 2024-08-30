@@ -210,7 +210,7 @@ public class ProductService {
         return image;
     }
 
-    private void setDefaultImage(Product product) {
+    public void setDefaultImage(Product product) {
         Image defaultImage = new Image();
         defaultImage.setName("default-product");
         defaultImage.setOriginalFileName("default-product.png");
