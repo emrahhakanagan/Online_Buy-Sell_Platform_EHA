@@ -28,9 +28,9 @@ public class ImageService {
         Image image = imageRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Image not found"));
         Product product = image.getProduct();
 
-        imageRepository.delete(image);
-
         if (image.getId().equals(product.getPreviewImageId())) {
+            product.getImages().remove(image);
+
             if (!product.getImages().isEmpty()) {
                 Image newPreviewImage = product.getImages().get(0);
                 newPreviewImage.setPreviewImage(true);
@@ -38,8 +38,11 @@ public class ImageService {
             } else {
                 setDefaultImage(product);
             }
-            productRepository.save(product);
         }
+
+        // Теперь удаляем изображение из базы данных
+        imageRepository.delete(image);
+        productRepository.save(product);
     }
 
     private void setDefaultImage(Product product) {
