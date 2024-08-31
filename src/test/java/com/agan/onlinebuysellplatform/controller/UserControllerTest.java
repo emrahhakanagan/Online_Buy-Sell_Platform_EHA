@@ -12,10 +12,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 
 import java.security.Principal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,7 +71,7 @@ public class UserControllerTest {
         String viewName = userController.login(null, null, null, model);
 
         assertEquals("login", viewName);
-        assertEquals(null, model.getAttribute("user"));
+        assertNull(model.getAttribute("user"));
     }
 
     @Test
@@ -96,23 +99,56 @@ public class UserControllerTest {
     @Test
     @DisplayName("Should register new user and redirect to login")
     public void testCreateUser_AndRedirectToLogin() throws Exception {
-        String viewName = userController.createUser(user, model);
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        String viewName = userController.createUser(user, bindingResult, model);
 
         verify(userService, times(1)).registerNewUser(user);
         assertEquals("redirect:/login", viewName);
     }
 
     @Test
-    @DisplayName("Should handle registration error and return registration view")
-    public void testCreateUser_HandleError() throws Exception {
-        String errorMessage = "Registration error";
-        doThrow(new RuntimeException(errorMessage)).when(userService).registerNewUser(user);
+    @DisplayName("Should handle validation errors and return registration view")
+    public void testCreateUser_ValidationErrors() throws Exception {
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
 
-        String viewName = userController.createUser(user, model);
+        Model model = mock(Model.class);
+
+        String viewName = userController.createUser(user, bindingResult, model);
 
         assertEquals("registration", viewName);
-        assertEquals(errorMessage, model.getAttribute("errorMessage"));
+
+        verify(userService, never()).registerNewUser(any(User.class));
     }
+
+    @Test
+    @DisplayName("Should handle registration error and return registration view")
+    public void testCreateUser_HandleError() throws Exception {
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+
+        Model model = mock(Model.class);
+
+        // Симуляция исключения во время регистрации пользователя
+        String errorMessage = "Registration error";
+        doThrow(new RuntimeException(errorMessage)).when(userService).registerNewUser(any(User.class));
+
+        // Вызов метода контроллера
+        String viewName = userController.createUser(user, bindingResult, model);
+
+        // Проверка, что возвращено правильное представление
+        assertEquals("registration", viewName);
+
+        // Проверка, что сообщение об ошибке было добавлено в модель
+        verify(model).addAttribute("errorMessage", errorMessage);
+    }
+
+
+
+
+
 
     @Test
     @DisplayName("Should confirm user registration and return confirm view")

@@ -15,14 +15,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -99,21 +99,30 @@ public class ProductControllerTest {
         MockMultipartFile file3 = new MockMultipartFile("file3", new byte[]{});
         Product product = new Product();
         List<Long> cityIds = Arrays.asList(1L, 2L, 3L);
+        BindingResult bindingResult = mock(BindingResult.class);
+        Model model = new ExtendedModelMap();
 
-        String viewName = productController.createProduct(file1, file2, file3, product, principal, cityIds);
+        String viewName = productController.createProduct(product, bindingResult, principal, model, file1, file2, file3, cityIds);
 
         verify(productService, times(1)).saveProduct(principal, product, cityIds, file1, file2, file3);
         assertEquals("redirect:/my/products", viewName);
     }
 
     @Test
-    @DisplayName("Should delete product and redirect to my products")
+    @DisplayName("Should delete product and redirect to my products when the product belongs to the user")
     public void testDeleteProduct_AndRedirectToMyProducts() {
         Long productId = 1L;
 
+        Product mockProduct = new Product();
+        mockProduct.setId(productId);
+        User mockUser = new User();
+        mockUser.setId(1L);
+        mockProduct.setUser(mockUser);
+
         String viewName = productController.deleteProduct(productId, principal);
 
-        verify(productService, times(1)).deleteProduct(productId);
+        verify(productService, times(1)).deleteProduct(productId, principal);
+
         assertEquals("redirect:/my/products", viewName);
     }
 

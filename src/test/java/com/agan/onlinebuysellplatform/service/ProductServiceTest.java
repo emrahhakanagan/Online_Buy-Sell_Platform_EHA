@@ -32,20 +32,13 @@ public class ProductServiceTest {
     @Mock
     private GermanCityService germanCityService;
 
-    @Mock
-    private MultipartFile file1;
-
-    @Mock
-    private MultipartFile file2;
-
-    @Mock
-    private MultipartFile file3;
-
     @InjectMocks
     private ProductService productService;
 
     private Product product1;
     private GermanCity germanCity;
+    private User mockUser;
+    private Principal mockPrincipal;
 
 //    @BeforeEach
 //    void setUpMocks() {
@@ -53,9 +46,17 @@ public class ProductServiceTest {
 //    }
 
     @BeforeEach
-    void setUpProduct() {
+    void setUp() {
+        mockUser = new User();
+        mockUser.setId(1L);
+        mockUser.setEmail("test@example.com");
+
         product1 = new Product();
         product1.setTitle("Product 1");
+        product1.setId(1L);
+        product1.setUser(mockUser);
+
+        mockPrincipal = mock(Principal.class);
     }
 
     @Test
@@ -216,14 +217,10 @@ public class ProductServiceTest {
 
     @Test
     @DisplayName("Should save product when all inputs are valid")
-    public void testSaveProduct_WhenAllInputsAreValid() throws Exception {
-        Principal principal = mock(Principal.class);
-        lenient().when(principal.getName()).thenReturn("test@example.com");
+    public void testSaveProduct_WhenAllInputsAreValid(){
+        lenient().when(mockPrincipal.getName()).thenReturn("test@example.com");
 
-        User user = new User();
-        user.setEmail("test@example.com");
-
-        lenient().when(userService.getUserByPrincipal(principal)).thenReturn(user);
+        lenient().when(userService.getUserByPrincipal(mockPrincipal)).thenReturn(mockUser);
         when(productRepository.save(any(Product.class))).thenAnswer(i -> i.getArgument(0));
 
         MultipartFile file1 = mock(MultipartFile.class);
@@ -239,13 +236,13 @@ public class ProductServiceTest {
         when(germanCityService.getCityById(1L)).thenReturn(city1);
         when(germanCityService.getCityById(2L)).thenReturn(city2);
 
-        productService.saveProduct(principal, product1, cityIds, file1, file2, file3);
+        productService.saveProduct(mockPrincipal, product1, cityIds, file1, file2, file3);
 
         ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
         verify(productRepository, times(2)).save(productCaptor.capture());
         Product savedProduct = productCaptor.getAllValues().get(0);
 
-        assertEquals(user, savedProduct.getUser());
+        assertEquals(mockUser, savedProduct.getUser());
         assertEquals(3, savedProduct.getImages().size());
         assertTrue(savedProduct.getImages().get(0).isPreviewImage());
         assertEquals(Arrays.asList(city1, city2), savedProduct.getCities());
@@ -254,13 +251,11 @@ public class ProductServiceTest {
     @Test
     @DisplayName("Should throw exception when principal is null")
     public void testSaveProduct_WhenPrincipalIsNull() {
-        Principal principal = null;
-        product1 = null;
         List<Long> cityIds = new ArrayList<>();
         MultipartFile file = mock(MultipartFile.class);
 
         assertThrows(RuntimeException.class, () -> {
-            productService.saveProduct(principal, product1, cityIds, file);
+            productService.saveProduct(mockPrincipal, product1, cityIds, file);
         });
     }
 
@@ -280,28 +275,54 @@ public class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("Should delete product when it exists")
-    public void testDeleteProduct_WhenProductExists() {
-        when(productRepository.existsById(anyLong())).thenReturn(true);
+    @DisplayName("Should delete product when it exists and belongs to the user")
+    public void testDeleteProduct_WhenProductExistsAndBelongsToUser() {
+        when(userService.getUserByPrincipal(mockPrincipal)).thenReturn(mockUser);
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product1));
 
-        productService.deleteProduct(1L);
+        productService.deleteProduct(1L, mockPrincipal);
 
         verify(productRepository, times(1)).deleteById(1L);
     }
 
+
+    @Test
+    @DisplayName("Should throw exception when product does not belong to the user")
+    public void testDeleteProduct_WhenProductDoesNotBelongToUser() {
+        User anotherUser = new User();
+        anotherUser.setId(2L);
+
+        product1.setUser(anotherUser);
+
+        when(userService.getUserByPrincipal(mockPrincipal)).thenReturn(mockUser);
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product1));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            productService.deleteProduct(1L, mockPrincipal);
+        });
+
+        assertEquals("You do not have permission to delete this product", exception.getMessage());
+
+        verify(productRepository, times(0)).deleteById(anyLong());
+    }
+
+
+
     @Test
     @DisplayName("Should throw exception when product does not exist")
     public void testDeleteProduct_WhenProductDoesNotExist() {
-        when(productRepository.existsById(anyLong())).thenReturn(false);
+        Principal mockPrincipal = mock(Principal.class);
+        when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            productService.deleteProduct(1L);
+            productService.deleteProduct(1L, mockPrincipal);
         });
 
         assertEquals("Product with id: 1 does not exist", exception.getMessage());
 
         verify(productRepository, times(0)).deleteById(anyLong());
     }
+
 
     @Test
     @DisplayName("Should return product when product exists by given ID")
