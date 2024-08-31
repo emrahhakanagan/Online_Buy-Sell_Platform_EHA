@@ -224,12 +224,17 @@ public class ProductService {
     }
 
     @Transactional
-    public void deleteProduct(Long id) {
-        if (productRepository.existsById(id)) {
-            productRepository.deleteById(id);
-        } else {
-            throw new RuntimeException("Product with id: " + id + " does not exist");
+    public void deleteProduct(Long id, Principal principal) {
+        User currentUser = userService.getUserByPrincipal(principal);
+
+        Product product = productRepository.findById(id).orElseThrow(() ->
+                new RuntimeException("Product with id: " + id + " does not exist"));
+
+        if (!product.getUser().equals(currentUser)) {
+            throw new RuntimeException("You do not have permission to delete this product");
         }
+
+        productRepository.deleteById(id);
     }
 
     public Product getProductById(Long id) {
