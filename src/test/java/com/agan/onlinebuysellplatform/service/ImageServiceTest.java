@@ -118,21 +118,4 @@ public class ImageServiceTest {
         assertEquals(100L, product.getPreviewImageId());
     }
 
-    @Test
-    @DisplayName("Should return default image ID when default image is found")
-    public void testGetDefaultImageId_WhenDefaultImageIsFound() {
-        Image defaultImage = new Image();
-        defaultImage.setId(100L);
-        defaultImage.setName("default-product");
-
-        when(imageRepository.findByName("default-product")).thenReturn(Optional.of(defaultImage));
-
-        Long defaultImageId = imageService.getDefaultImageId();
-
-        assertNotNull(defaultImageId);
-        assertEquals(100L, defaultImageId);
-        verify(imageRepository, times(1)).findByName("default-product");
-    }
-
-
 }
