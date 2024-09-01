@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ImageService {
 
+    private final String defaultImageName = "default-product";
     private final ProductRepository productRepository;
     private final ProductService productService;
     private final ImageRepository imageRepository;
@@ -37,12 +38,18 @@ public class ImageService {
                 product.setPreviewImageId(newPreviewImage.getId());
             } else {
                 setDefaultImage(product);
+                product.setPreviewImageId(getDefaultImageId());
             }
         }
 
-        // Теперь удаляем изображение из базы данных
         imageRepository.delete(image);
         productRepository.save(product);
+    }
+
+    private Long getDefaultImageId() {
+        return imageRepository.findByName(defaultImageName)
+                .map(Image::getId)
+                .orElseThrow(() -> new EntityNotFoundException("Default image not found"));
     }
 
     private void setDefaultImage(Product product) {
