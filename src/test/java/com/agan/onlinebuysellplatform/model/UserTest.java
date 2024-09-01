@@ -1,6 +1,9 @@
 package com.agan.onlinebuysellplatform.model;
 
 import com.agan.onlinebuysellplatform.model.enums.Role;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import jakarta.validation.Validator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 public class UserTest {
 
+    private Validator validator;
     private User user;
 
     @Autowired
@@ -29,6 +34,9 @@ public class UserTest {
     @BeforeEach
     void setUp() {
         user = new User();
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+            validator = factory.getValidator();
+        }
     }
 
     @Test
@@ -224,12 +232,58 @@ public class UserTest {
     }
 
     @Test
-    @DisplayName("Should automatically initialize date of creation on pre persist")
+    @DisplayName("Должен автоматически инициализировать дату создания при сохранении")
     public void testInit_AutoInitialization() {
         user = new User();
-        assertNull(user.getDateOfCreated(), "Date of creation should be null before init");
+        user.setEmail("test@example.com");
+        user.setName("Test User");
+        user.setPhoneNumber("1234567890");
+        user.setPassword("Password1");
+        user.setPasswordConfirmation("Password1");
+
+        assertNull(user.getDateOfCreated(), "Дата создания должна быть null до сохранения");
 
         entityManager.persist(user);
-        assertNotNull(user.getDateOfCreated(), "Date of creation should be initialized");
+        assertNotNull(user.getDateOfCreated(), "Дата создания должна быть инициализирована");
     }
+
+    @Test
+    @DisplayName("Should fail validation for invalid email")
+    public void testInvalidEmail() {
+        user.setEmail("invalid-email");
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertFalse(violations.isEmpty());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Invalid email format")));
+    }
+
+    @Test
+    @DisplayName("Should fail validation for blank email")
+    public void testBlankEmail() {
+        user.setEmail("");
+        user.setPassword("somePassword");  // Убедитесь, что password установлен
+        user.setPasswordConfirmation("somePassword");  // Убедитесь, что passwordConfirmation установлен
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertFalse(violations.isEmpty());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Email cannot be blank")));
+    }
+
+    @Test
+    @DisplayName("Should fail validation for invalid phone number")
+    public void testInvalidPhoneNumber() {
+        user.setPhoneNumber("123");
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertFalse(violations.isEmpty());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Phone number must contain only digits and be 10 to 15 characters long")));
+    }
+
+    @Test
+    @DisplayName("Should fail validation when password and confirmation do not match")
+    public void testPasswordConfirmationMismatch() {
+        user.setPassword("Password1");
+        user.setPasswordConfirmation("DifferentPassword");
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertFalse(violations.isEmpty());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Password and password confirmation do not match")));
+    }
+
 }
