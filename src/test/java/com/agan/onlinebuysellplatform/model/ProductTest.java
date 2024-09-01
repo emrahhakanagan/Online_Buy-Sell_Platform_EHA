@@ -1,10 +1,15 @@
 package com.agan.onlinebuysellplatform.model;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,6 +17,7 @@ public class ProductTest {
 
     private Product product;
     private User user;
+    private Validator validator;
 
     @BeforeEach
     public void setUp() {
@@ -19,6 +25,9 @@ public class ProductTest {
         user = new User();
 
         product.setUser(user);
+
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
     }
 
     @Test
@@ -115,5 +124,32 @@ public class ProductTest {
 
         user.getProducts().add(product);
         assertTrue(user.getProducts().contains(product), "User should contain the product after adding it explicitly");
+    }
+
+    @Test
+    @DisplayName("Should fail validation when title is blank")
+    public void testBlankTitle() {
+        product.setTitle("");
+        Set<ConstraintViolation<Product>> violations = validator.validate(product);
+        assertFalse(violations.isEmpty());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Title cannot be blank")));
+    }
+
+    @Test
+    @DisplayName("Should fail validation when description is too short")
+    public void testShortDescription() {
+        product.setDescription("Too short");
+        Set<ConstraintViolation<Product>> violations = validator.validate(product);
+        assertFalse(violations.isEmpty());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Description must be between 10 and 500 characters")));
+    }
+
+    @Test
+    @DisplayName("Should fail validation when price is negative")
+    public void testNegativePrice() {
+        product.setPrice(-100);
+        Set<ConstraintViolation<Product>> violations = validator.validate(product);
+        assertFalse(violations.isEmpty());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Price must be a positive number")));
     }
 }
