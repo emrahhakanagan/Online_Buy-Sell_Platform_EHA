@@ -31,7 +31,7 @@ public class User implements UserDetails {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Pattern(regexp = "^[A-Za-z]{2,50}$", message = "Name must contain only letters and be 2 to 50 characters long")
+    @Pattern(regexp = "^[A-Za-z ]{2,50}$", message = "Name must contain only letters and spaces, and be 2 to 50 characters long")
     @NotBlank(message = "Name cannot be blank")
     @Column(name = "name")
     private String name;
@@ -80,7 +80,7 @@ public class User implements UserDetails {
 
     @AssertTrue(message = "Password and password confirmation do not match")
     public boolean isPasswordValid() {
-        return password.equals(passwordConfirmation);
+        return this.password != null && this.password.equals(this.passwordConfirmation);
     }
 
     public boolean isAdmin() {
