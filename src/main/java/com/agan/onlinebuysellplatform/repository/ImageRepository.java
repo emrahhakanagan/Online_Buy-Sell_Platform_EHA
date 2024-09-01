@@ -7,7 +7,5 @@ import javax.net.ssl.SSLSession;
 import java.util.Optional;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
-    void deleteByProductId(Long productId);
-
     Optional<Image> findByName(String defaultImageName);
 }
