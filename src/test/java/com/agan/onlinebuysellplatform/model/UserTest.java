@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import jakarta.validation.Validator;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -79,11 +81,40 @@ public class UserTest {
     }
 
     @Test
+    @DisplayName("Should fail validation for invalid email format")
+    public void testInvalidEmailFormat() {
+        user.setEmail("invalid-email");
+
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertFalse(violations.isEmpty());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Invalid email format")));
+    }
+
+    @Test
     @DisplayName("Should set and get phone number")
     public void testSetGetPhoneNumber() {
         String phoneNumber = "123456789";
         user.setPhoneNumber(phoneNumber);
         assertEquals(phoneNumber, user.getPhoneNumber());
+    }
+
+    @Test
+    @DisplayName("Should fail validation for invalid phone number format")
+    public void testInvalidPhoneNumberFormat() {
+        user.setEmail("valid.email@example.com");
+        user.setName("Valid Name");
+        user.setPassword("ValidPassword1");
+        user.setPasswordConfirmation("ValidPassword1");
+
+        user.setPhoneNumber("InvalidPhoneNumber");
+
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+
+        assertFalse(violations.isEmpty(), "Expected validation errors but found none");
+        assertTrue(violations.stream().anyMatch(v ->
+                        "Invalid phone number format".equals(v.getMessage())),
+                "Expected 'Invalid phone number format' validation error, but found: " +
+                violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(", ")));
     }
 
     @Test
@@ -116,6 +147,18 @@ public class UserTest {
         user.setPassword(password);
         assertEquals(password, user.getPassword());
     }
+
+    @Test
+    @DisplayName("Should fail validation when password and confirmation do not match")
+    public void testPasswordAndConfirmationDoNotMatch() {
+        user.setPassword("Password1");
+        user.setPasswordConfirmation("Password2");
+
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertFalse(violations.isEmpty());
+        assertFalse(violations.stream().anyMatch(v -> v.getMessage().equals("Passwords do not match")));
+    }
+
 
     @Test
     @DisplayName("Should set and get confirmation token")
