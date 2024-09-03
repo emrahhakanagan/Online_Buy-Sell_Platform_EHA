@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,20 +39,36 @@ public class ProductRepositoryTest {
 
         product1 = new Product();
         product1.setTitle(title);
+        product1.setDescription("This is a test product");
+        product1.setPrice(100);
+        product1.setCities(new ArrayList<>()); // Создаем изменяемый список
         entityManager.persist(product1);
 
         product2 = new Product();
         product2.setTitle(title);
+        product2.setDescription("Another test product");
+        product2.setPrice(150);
+        product2.setCities(new ArrayList<>()); // Создаем изменяемый список
         entityManager.persist(product2);
 
         city = new GermanCity();
         city.setCity_name("Berlin");
         entityManager.persist(city);
-        product1.getCities().add(city);
 
+        product1.getCities().add(city); // Теперь можно добавить город в список
         entityManager.persist(product1);
-
         entityManager.flush();
+    }
+
+
+    @Test
+    @DisplayName("Should save product successfully")
+    public void testSaveProduct() {
+        product1.setCities(new ArrayList<>(Collections.singletonList(city))); // Создаем изменяемый список
+
+        Product savedProduct = productRepository.save(product1);
+        assertNotNull(savedProduct.getId());
+        assertEquals("Test Product", savedProduct.getTitle());
     }
 
     @Test
@@ -104,6 +121,9 @@ public class ProductRepositoryTest {
     public void testSearchProductByKeywordTitle_WhenKeywordMatchesTitle() {
         Product product3 = new Product();
         product3.setTitle("Another Product");
+        product3.setDescription("Description for Another Product"); // Добавьте описание
+        product3.setPrice(200); // Заполните другие обязательные поля
+        product3.setCities(new ArrayList<>()); // Если города обязательны
         entityManager.persist(product3);
 
         entityManager.flush();
@@ -113,8 +133,9 @@ public class ProductRepositoryTest {
         assertFalse(foundProducts.isEmpty(), "Products should be found for the given keyword");
         assertEquals(2, foundProducts.size(), "Two products should be found with the keyword 'Test'");
         assertTrue(foundProducts.stream().allMatch(p -> p.getTitle().toLowerCase().contains("test")),
-                "All found products should contain the keyword 'Gadget' in the title");
+                "All found products should contain the keyword 'Test' in the title");
     }
+
 
     @Test
     @DisplayName("Should return empty list when no product matches the keyword")

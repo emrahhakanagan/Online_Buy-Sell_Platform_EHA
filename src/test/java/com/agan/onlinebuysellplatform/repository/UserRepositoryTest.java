@@ -1,16 +1,13 @@
 package com.agan.onlinebuysellplatform.repository;
 
-import com.agan.onlinebuysellplatform.config.TestConfig;
 import com.agan.onlinebuysellplatform.model.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // ----- second version----- //
 @SpringBootTest
 @ActiveProfiles("test")
-
+@Transactional
 public class UserRepositoryTest {
 
     @Autowired
@@ -33,17 +30,37 @@ public class UserRepositoryTest {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Test
-    @DisplayName("Should find user by email")
-    public void testFindByEmail_WhenUserExists() {
-        User user = new User();
+    private User user;
+
+    @BeforeEach
+    public void setup() {
+        userRepository.deleteAll();
+
+        user = new User();
         user.setEmail("test@example.com");
-        user.setPassword("password");
+        user.setName("Test User");
+        user.setPhoneNumber("1234567890");
+        user.setPassword("Password1");
+        user.setPasswordConfirmation("Password1");
         user.setConfirmed(true);
         user.setActive(true);
 
-        userRepository.save(user);
+        entityManager.persist(user);
+        entityManager.flush();
+    }
 
+    @Test
+    @DisplayName("Should save user successfully")
+    public void testSaveUser() {
+        User savedUser = userRepository.save(user);
+        assertNotNull(savedUser.getId());
+        assertEquals("test@example.com", savedUser.getEmail());
+        assertEquals("Test User", savedUser.getName());
+    }
+
+    @Test
+    @DisplayName("Should find user by email")
+    public void testFindByEmail_WhenUserExists() {
         User foundUser = userRepository.findByEmail("test@example.com");
 
         assertNotNull(foundUser);
@@ -62,11 +79,11 @@ public class UserRepositoryTest {
 
     @Test
     @DisplayName("Should return user when confirmation token exists")
-    @Transactional
     public void testFindByConfirmationToken_WhenTokenExists() {
         String token = "existingToken";
-        User user = new User();
+
         user.setConfirmationToken(token);
+
         entityManager.persist(user);
         entityManager.flush();
 
