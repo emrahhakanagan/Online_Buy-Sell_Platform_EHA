@@ -112,8 +112,8 @@ public class UserTest {
 
         assertFalse(violations.isEmpty(), "Expected validation errors but found none");
         assertTrue(violations.stream().anyMatch(v ->
-                        "Invalid phone number format".equals(v.getMessage())),
-                "Expected 'Invalid phone number format' validation error, but found: " +
+                        "Phone number must contain only digits and be 10 to 15 characters long".equals(v.getMessage())),
+                "Expected 'Phone number must contain only digits and be 10 to 15 characters long' validation error, but found: " +
                 violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(", ")));
     }
 
@@ -154,10 +154,18 @@ public class UserTest {
         user.setPassword("Password1");
         user.setPasswordConfirmation("Password2");
 
+        // Manually trigger the validation for password confirmation
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertFalse(violations.isEmpty());
-        assertFalse(violations.stream().anyMatch(v -> v.getMessage().equals("Passwords do not match")));
+
+        // Check that the violations contain the expected message
+        assertFalse(violations.isEmpty(), "Expected validation errors but found none");
+        assertTrue(violations.stream().anyMatch(v ->
+                        "Password and password confirmation do not match".equals(v.getMessage())),
+                "Expected 'Password and password confirmation do not match' validation error, but found: " +
+                violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(", ")));
     }
+
+
 
 
     @Test

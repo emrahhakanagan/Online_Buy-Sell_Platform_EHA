@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -74,6 +75,19 @@ public class ProductTest {
     }
 
     @Test
+    @DisplayName("Should fail validation when product title is blank")
+    public void testBlankProductTitle() {
+        product.setTitle("");
+
+        Set<ConstraintViolation<Product>> violations = validator.validate(product);
+        assertFalse(violations.isEmpty());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Title cannot be blank")),
+                "Expected 'Title cannot be blank' validation error, but found: " +
+                violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(", ")));
+    }
+
+
+    @Test
     @DisplayName("Should set and get description")
     public void testSetAndGetDescription() {
         String description = "Test Description";
@@ -88,6 +102,19 @@ public class ProductTest {
         product.setPrice(price);
         assertEquals(price, product.getPrice());
     }
+
+    @Test
+    @DisplayName("Should fail validation when product price is negative")
+    public void testNegativeProductPrice() {
+        product.setPrice(-10);
+
+        Set<ConstraintViolation<Product>> violations = validator.validate(product);
+        assertFalse(violations.isEmpty());
+        assertTrue(violations.stream().anyMatch(v -> v.getMessage().equals("Price must be a positive number")),
+                "Expected 'Price must be a positive number' validation error, but found: " +
+                violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(", ")));
+    }
+
 
     @Test
     @DisplayName("Should set and get preview image ID")
