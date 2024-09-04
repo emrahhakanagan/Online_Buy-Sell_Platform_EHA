@@ -79,6 +79,7 @@
                         </form>
                         <form action="/product/delete/${product.id}" method="post">
                             <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+                            <input type="hidden" name="_method" value="delete"/>
                             <button type="submit" class="btn btn-danger m-3">
                                 Delete
                             </button>
