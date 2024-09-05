@@ -46,7 +46,6 @@
             <textarea required class="form-control" id="description" name="description">${product.description}</textarea>
         </div>
 
-        <!-- Контейнер для изображений -->
         <div id="images-container">
             <#list images as image>
                 <div class="image-block" id="image-${image.id}">
@@ -59,7 +58,6 @@
             </#list>
         </div>
 
-        <!-- Добавление новых изображений, если их меньше лимита -->
         <#if product.images?size < imagesLimit>
             <#list 1..(imagesLimit - product.images?size) as i>
                 <div class="form-group mt-2">
@@ -86,7 +84,7 @@
                             'X-CSRF-TOKEN': '${_csrf.token}'
                         },
                         success: function(result) {
-                            $('#image-' + imageId).remove();  // Удаляем элемент из DOM
+                            $('#image-' + imageId).remove();
                             alert('Image deleted successfully.');
                         },
                         error: function(xhr, status, error) {
