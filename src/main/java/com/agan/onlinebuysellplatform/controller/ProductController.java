@@ -89,6 +89,7 @@ public class ProductController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("bindingResult", bindingResult);
             model.addAttribute("cities", germanCityService.getAllCities());
+            model.addAttribute("imagesLimit", ConfigurationLimits.IMAGE_NUMBER_OF_PRODUCT.getValue());
             return "edit-product";
         }
         productService.updateProduct(id, principal, product, cityIds, files);
