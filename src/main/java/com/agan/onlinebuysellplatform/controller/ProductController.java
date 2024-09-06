@@ -8,6 +8,7 @@ import com.agan.onlinebuysellplatform.service.ProductService;
 import com.agan.onlinebuysellplatform.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -97,9 +98,9 @@ public class ProductController {
     }
 
     @DeleteMapping("/product/delete/{id}")
-    public String deleteProduct(@PathVariable Long id, Principal principal) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id, Principal principal) {
         productService.deleteProduct(id, principal);
-        return "redirect:/my/products";
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/my/products")

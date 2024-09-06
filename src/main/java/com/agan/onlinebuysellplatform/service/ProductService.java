@@ -225,8 +225,6 @@ public class ProductService {
 
     @Transactional
     public void deleteProduct(Long id, Principal principal) {
-        log.info("Attempting to delete product with id: {}", id);
-
         User currentUser = userService.getUserByPrincipal(principal);
         Product product = productRepository.findById(id).orElseThrow(() ->
                 new RuntimeException("Product with id: " + id + " does not exist"));
@@ -235,10 +233,9 @@ public class ProductService {
             throw new RuntimeException("You do not have permission to delete this product");
         }
 
-        log.info("Deleting product with id: {}", id);
-        productRepository.deleteById(id);
-        log.info("Product deleted successfully.");
+        productRepository.deleteByIdAndUserId(id, currentUser.getId());
     }
+
 
     public Product getProductById(Long id) {
         return productRepository.findById(id).orElse(null);
