@@ -49,7 +49,7 @@ public class UserController {
 
     @GetMapping("/registration")
     public String registration(Principal principal, Model model) {
-        model.addAttribute("user", userService.getUserByPrincipal(principal));
+        model.addAttribute("user", new User());
 
         return "registration";
     }
@@ -61,9 +61,13 @@ public class UserController {
             return "registration";
         }
 
+        if (!user.getPassword().equals(user.getPasswordConfirmation())) {
+            model.addAttribute("errorMessage", "Passwords do not match");
+            return "registration";
+        }
+
         try {
             userService.registerNewUser(user);
-
             return "redirect:/login";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
