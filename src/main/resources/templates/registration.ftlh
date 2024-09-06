@@ -5,19 +5,23 @@
     <form action="/registration" method="post">
         <div class="form-group">
             <label for="name">Name Surname</label>
-            <input type="text" class="form-control" required id="name" name="name">
+            <input type="text" class="form-control" required id="name" name="name" value="${user.name}">
         </div>
         <div class="form-group">
             <label for="email">Email (username)</label>
-            <input type="email" class="form-control" id="email" required name="email">
+            <input type="email" class="form-control" id="email" required name="email" value="${user.email}">
         </div>
         <div class="form-group">
             <label for="phoneNumber">Phone Number</label>
-            <input type="text" class="form-control" id="phoneNumber" required name="phoneNumber">
+            <input type="text" class="form-control" id="phoneNumber" required name="phoneNumber" value="${user.phoneNumber}">
         </div>
         <div class="form-group">
             <label for="password">Password</label>
             <input type="password" class="form-control" id="password" required name="password">
+        </div>
+        <div class="form-group">
+            <label for="passwordConfirmation">Confirm Password</label>
+            <input type="password" class="form-control" id="passwordConfirmation" required name="passwordConfirmation">
         </div>
         <input type="hidden" name="_csrf" value="${_csrf.token}">
         <button type="submit" style="width: 100%" class="btn btn-dark">Sign up</button>
