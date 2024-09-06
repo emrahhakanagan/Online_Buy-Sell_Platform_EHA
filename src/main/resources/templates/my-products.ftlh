@@ -79,8 +79,7 @@
                         </form>
                         <form action="/product/delete/${product.id}" method="post">
                             <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-                            <input type="hidden" name="_method" value="delete"/>
-                            <button type="submit" class="btn btn-danger m-3">
+                            <button type="button" class="btn btn-danger m-3 delete-product-button" data-product-id="${product.id}">
                                 Delete
                             </button>
                         </form>
@@ -103,5 +102,30 @@
         </#list>
     </div>
 
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.delete-product-button').on('click', function() {
+                var productId = $(this).data('product-id');
+                if (confirm('Are you sure you want to delete this product?')) {
+                    $.ajax({
+                        url: '/product/delete/' + productId,
+                        type: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '${_csrf.token}'
+                        },
+                        success: function() {
+                            $('#product-' + productId).remove();
+                            alert('Product deleted successfully.');
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error during fetch:', error);
+                            alert('Failed to delete product.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 </@t.template>
