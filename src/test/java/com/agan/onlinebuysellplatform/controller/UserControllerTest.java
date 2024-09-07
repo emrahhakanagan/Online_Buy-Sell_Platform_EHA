@@ -17,8 +17,7 @@ import org.springframework.validation.BindingResult;
 
 import java.security.Principal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -86,14 +85,13 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Should return registration view with user details")
-    public void testRegistration_WithUserDetails() {
-        when(userService.getUserByPrincipal(principal)).thenReturn(user);
-
-        String viewName = userController.registration(principal, model);
+    @DisplayName("Should return registration view with a new user")
+    public void testRegistration_WithNewUser() {
+        String viewName = userController.registration(model);
 
         assertEquals("registration", viewName);
-        assertEquals(user, model.getAttribute("user"));
+
+        assertInstanceOf(User.class, model.getAttribute("user"));
     }
 
     @Test
