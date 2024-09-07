@@ -48,21 +48,15 @@ public class UserController {
     }
 
     @GetMapping("/registration")
-    public String registration(Principal principal, Model model) {
+    public String registration(Model model) {
         model.addAttribute("user", new User());
 
         return "registration";
     }
 
-
     @PostMapping("/registration")
     public String createUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
-            return "registration";
-        }
-
-        if (!user.getPassword().equals(user.getPasswordConfirmation())) {
-            model.addAttribute("errorMessage", "Passwords do not match");
             return "registration";
         }
 
