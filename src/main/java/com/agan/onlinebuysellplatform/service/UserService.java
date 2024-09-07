@@ -22,8 +22,6 @@ public class UserService {
     private final EmailService emailService;
 
     public void registerNewUser(User userNew) throws Exception {
-        validateUser(userNew);
-
         if (userRepository.findByEmail(userNew.getEmail()) != null) {
             throw new Exception("User already exists");
         }
@@ -43,12 +41,6 @@ public class UserService {
         String text = "<p>To confirm your registration, please click the following link: <a href=\"http://localhost:8080/confirm?token=" + user.getConfirmationToken() + "\">Confirm Registration</a></p>";
 
         emailService.sendEmail(userNew.getEmail(), subject, text);
-    }
-
-    private void validateUser(User user) throws Exception {
-        if (!user.getPassword().equals(user.getPasswordConfirmation())) {
-            throw new Exception("Passwords do not match");
-        }
     }
 
     public User confirmUser(String token) throws Exception {
