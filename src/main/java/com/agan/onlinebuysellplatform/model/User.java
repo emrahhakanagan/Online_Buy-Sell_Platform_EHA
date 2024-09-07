@@ -1,6 +1,7 @@
 package com.agan.onlinebuysellplatform.model;
 
 import com.agan.onlinebuysellplatform.model.enums.Role;
+import com.agan.onlinebuysellplatform.validation.PasswordMatches;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -15,6 +16,7 @@ import java.util.*;
 @Table(schema = "buyselleha", name = "users")
 @Data
 @ToString(exclude = {"products"})
+@PasswordMatches
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
