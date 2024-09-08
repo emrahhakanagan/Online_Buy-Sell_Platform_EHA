@@ -1,6 +1,7 @@
 package com.agan.onlinebuysellplatform.model;
 
 import com.agan.onlinebuysellplatform.model.enums.Role;
+import com.agan.onlinebuysellplatform.validation.FormValidationGroup;
 import com.agan.onlinebuysellplatform.validation.PasswordMatches;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -16,7 +17,7 @@ import java.util.*;
 @Table(schema = "buyselleha", name = "users")
 @Data
 @ToString(exclude = {"products"})
-@PasswordMatches
+@PasswordMatches(groups = FormValidationGroup.class)
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,7 +53,7 @@ public class User implements UserDetails {
     private String password;
 
     @Transient
-    @NotBlank(message = "Password confirmation cannot be blank")
+    @NotBlank(message = "Password confirmation cannot be blank", groups = FormValidationGroup.class)
     private String passwordConfirmation;
 
     @Column(name = "confirmation_token")
@@ -79,11 +80,6 @@ public class User implements UserDetails {
     }
 
     // security
-
-    @AssertTrue(message = "Password and password confirmation do not match")
-    public boolean isPasswordValid() {
-        return this.password != null && this.password.equals(this.passwordConfirmation);
-    }
 
     public boolean isAdmin() {
         return roles.contains(Role.ROLE_ADMIN);
