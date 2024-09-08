@@ -30,7 +30,9 @@ public class UserService {
         user.setName(userNew.getName());
         user.setPhoneNumber(userNew.getPhoneNumber());
         user.setEmail(userNew.getEmail());
+        log.info("Here is before 'user.setPassword(passwordEncoder.encode(userNew.getPassword()));'");
         user.setPassword(passwordEncoder.encode(userNew.getPassword()));
+        log.info("Here is after 'user.setPassword(passwordEncoder.encode(userNew.getPassword()));'");
         user.setConfirmationToken(UUID.randomUUID().toString());
         user.setActive(true);
         user.setRoles(Collections.singleton(Role.ROLE_USER));
