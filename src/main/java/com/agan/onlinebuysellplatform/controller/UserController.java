@@ -2,17 +2,23 @@ package com.agan.onlinebuysellplatform.controller;
 
 import com.agan.onlinebuysellplatform.model.User;
 import com.agan.onlinebuysellplatform.service.UserService;
+import com.agan.onlinebuysellplatform.validation.FormValidationGroup;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
     private final UserService userService;
 
@@ -55,16 +61,19 @@ public class UserController {
     }
 
     @PostMapping("/registration")
-    public String createUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
+    public String createUser(@Validated(FormValidationGroup.class) @ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
+            log.error("error binding {}: ", bindingResult.getAllErrors());
             return "registration";
         }
 
+        log.info("no error with validation of password");
         try {
             userService.registerNewUser(user);
             return "redirect:/login";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
+            log.error("Error during registration: ", e);
+            model.addAttribute("errorMessage", "ERROR: " + e.getMessage());
             return "registration";
         }
     }
