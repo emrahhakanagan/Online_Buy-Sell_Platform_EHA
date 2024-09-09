@@ -10,12 +10,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -32,12 +36,14 @@ public class UserControllerTest {
     private Principal principal;
     private Model model;
     private User user;
+    private BindingResult bindingResult;
 
     @BeforeEach
     void setup() {
         principal = mock(Principal.class);
         model = new ExtendedModelMap();
         user = new User();
+        bindingResult = mock(BindingResult.class);
     }
 
     @Test
@@ -95,58 +101,58 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Should register new user and redirect to login")
-    public void testCreateUser_AndRedirectToLogin() throws Exception {
-        BindingResult bindingResult = mock(BindingResult.class);
+    @DisplayName("Should register new user and return HTTP 200")
+    public void testCreateUser_SuccessfulRegistration() throws Exception {
         when(bindingResult.hasErrors()).thenReturn(false);
 
-        String viewName = userController.createUser(user, bindingResult, model);
+        ResponseEntity<?> response = userController.createUser(user, bindingResult);
 
         verify(userService, times(1)).registerNewUser(user);
-        assertEquals("redirect:/login", viewName);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
-    @DisplayName("Should handle validation errors and return registration view")
+    @DisplayName("Should handle validation errors and return HTTP 400 with errors")
     public void testCreateUser_ValidationErrors() throws Exception {
-        BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        Model model = mock(Model.class);
+        FieldError fieldError = new FieldError("user", "email", "Invalid email format");
+        when(bindingResult.getFieldErrors()).thenReturn(List.of(fieldError));
 
-        String viewName = userController.createUser(user, bindingResult, model);
-
-        assertEquals("registration", viewName);
+        ResponseEntity<?> response = userController.createUser(user, bindingResult);
 
         verify(userService, never()).registerNewUser(any(User.class));
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        Map<String, Object> outerErrors = (Map<String, Object>) response.getBody();
+        assertNotNull(outerErrors);
+
+        Map<String, String> errors = (Map<String, String>) outerErrors.get("errors");
+        assertNotNull(errors, "Errors map should not be null");
+
+        assertTrue(errors.containsKey("email"), "Errors should contain 'email' field");
+
+        assertEquals("Invalid email format", errors.get("email"));
     }
 
     @Test
-    @DisplayName("Should handle registration error and return registration view")
+    @DisplayName("Should handle registration error and return HTTP 500 with error message")
     public void testCreateUser_HandleError() throws Exception {
-        BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.hasErrors()).thenReturn(false);
 
-        Model model = mock(Model.class);
-
-        // Симуляция исключения во время регистрации пользователя
         String errorMessage = "Registration error";
         doThrow(new RuntimeException(errorMessage)).when(userService).registerNewUser(any(User.class));
 
-        // Вызов метода контроллера
-        String viewName = userController.createUser(user, bindingResult, model);
+        ResponseEntity<?> response = userController.createUser(user, bindingResult);
 
-        // Проверка, что возвращено правильное представление
-        assertEquals("registration", viewName);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
 
-        // Проверка, что сообщение об ошибке было добавлено в модель
-        verify(model).addAttribute("errorMessage", errorMessage);
+        Map<String, String> errorBody = (Map<String, String>) response.getBody();
+        assertNotNull(errorBody);
+        assertEquals(errorMessage, errorBody.get("error"));
     }
-
-
-
-
-
 
     @Test
     @DisplayName("Should confirm user registration and return confirm view")
