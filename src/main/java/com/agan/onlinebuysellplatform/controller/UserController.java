@@ -5,16 +5,20 @@ import com.agan.onlinebuysellplatform.service.UserService;
 import com.agan.onlinebuysellplatform.validation.FormValidationGroup;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -61,20 +65,21 @@ public class UserController {
     }
 
     @PostMapping("/registration")
-    public String createUser(@Validated(FormValidationGroup.class) @ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
+    public ResponseEntity<?> createUser(@Validated(FormValidationGroup.class) @ModelAttribute("user") User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            log.error("error binding {}: ", bindingResult.getAllErrors());
-            return "registration";
+            Map<String, String> errors = bindingResult.getFieldErrors().stream()
+                    .collect(Collectors.toMap(
+                            FieldError::getField,
+                            fieldError -> Objects.requireNonNullElse(fieldError.getDefaultMessage(), "Unknown error")
+                    ));
+            return ResponseEntity.badRequest().body(Map.of("errors", errors));
         }
 
-        log.info("no error with validation of password");
         try {
             userService.registerNewUser(user);
-            return "redirect:/login";
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.error("Error during registration: ", e);
-            model.addAttribute("errorMessage", "ERROR: " + e.getMessage());
-            return "registration";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }
     }
 
