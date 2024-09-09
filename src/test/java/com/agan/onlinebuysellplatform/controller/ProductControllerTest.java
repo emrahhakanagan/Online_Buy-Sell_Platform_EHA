@@ -18,6 +18,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.Arrays;
@@ -45,11 +46,13 @@ public class ProductControllerTest {
 
     private Principal principal;
     private Model model;
+    private Product product;
 
     @BeforeEach
     void setup() {
         principal = mock(Principal.class);
         model = new ExtendedModelMap();
+        product = new Product();
     }
 
     @Test
@@ -79,7 +82,7 @@ public class ProductControllerTest {
     @DisplayName("Should return product info view with product details")
     public void testProductInfo_WithProductDetails() {
         Long productId = 1L;
-        Product product = new Product();
+
         product.setUser(new User());
 
         when(productService.getProductById(productId)).thenReturn(product);
@@ -95,21 +98,26 @@ public class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("Should create product and redirect to my products")
-    public void testCreateProduct_AndRedirectToMyProducts() {
-        MockMultipartFile file1 = new MockMultipartFile("file1", new byte[]{});
-        MockMultipartFile file2 = new MockMultipartFile("file2", new byte[]{});
-        MockMultipartFile file3 = new MockMultipartFile("file3", new byte[]{});
-        Product product = new Product();
+    @DisplayName("Should create product and return 200 OK")
+    public void testCreateProduct_ReturnsOkResponse() throws Exception {
+        MockMultipartFile[] files = {
+                new MockMultipartFile("file1", new byte[]{}),
+                new MockMultipartFile("file2", new byte[]{}),
+                new MockMultipartFile("file3", new byte[]{})
+        };
+
         List<Long> cityIds = Arrays.asList(1L, 2L, 3L);
         BindingResult bindingResult = mock(BindingResult.class);
-        Model model = new ExtendedModelMap();
 
-        String viewName = productController.createProduct(product, bindingResult, principal, model, file1, file2, file3, cityIds);
+        when(bindingResult.hasErrors()).thenReturn(false);
 
-        verify(productService, times(1)).saveProduct(principal, product, cityIds, file1, file2, file3);
-        assertEquals("redirect:/my/products", viewName);
+        ResponseEntity<?> response = productController.createProduct(product, bindingResult, principal, cityIds, files);
+
+        verify(productService, times(1)).saveProduct(principal, product, cityIds, files);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
+
 
     @Test
     @DisplayName("Should delete product and redirect to my products when the product belongs to the user")
