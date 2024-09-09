@@ -8,15 +8,20 @@ import com.agan.onlinebuysellplatform.service.ProductService;
 import com.agan.onlinebuysellplatform.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.validation.FieldError;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -53,20 +58,25 @@ public class ProductController {
     }
 
     @PostMapping("/product/create")
-    public String createProduct(@Valid @ModelAttribute("product") Product product, BindingResult bindingResult,
-                                Principal principal, Model model,
-                                @RequestParam(value = "file1", required = false) MultipartFile file1,
-                                @RequestParam(value = "file2", required = false) MultipartFile file2,
-                                @RequestParam(value = "file3", required = false) MultipartFile file3,
-                                @RequestParam List<Long> cityIds) {
+    public ResponseEntity<?> createProduct(@Valid @ModelAttribute("product") Product product,
+                                           BindingResult bindingResult,
+                                           Principal principal,
+                                           @RequestParam List<Long> cityIds,
+                                           @RequestParam(value = "files", required = false) MultipartFile... files) {
         if (bindingResult.hasErrors()) {
-                model.addAttribute("cities", germanCityService.getAllCities());
-                return "add-product";
+            Map<String, String> errors = bindingResult.getFieldErrors().stream()
+                    .collect(Collectors.toMap(
+                            FieldError::getField,
+                            fieldError -> Objects.requireNonNullElse(fieldError.getDefaultMessage(), "Unknown error")  // Обработка null
+                    ));
+            return ResponseEntity.badRequest().body(Map.of("errors", errors));
         }
 
-        productService.saveProduct(principal, product, cityIds, file1, file2, file3);
-        return "redirect:/my/products";
+        productService.saveProduct(principal, product, cityIds, files);
+        return ResponseEntity.ok().build();
     }
+
+
 
     @GetMapping("/product/edit/{id}")
     public String editProductForm(@PathVariable Long id, Model model, Principal principal) {
