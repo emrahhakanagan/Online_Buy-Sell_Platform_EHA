@@ -8,14 +8,13 @@ import com.agan.onlinebuysellplatform.service.ProductService;
 import com.agan.onlinebuysellplatform.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.validation.FieldError;
 
 import java.security.Principal;
 import java.util.List;
@@ -67,7 +66,7 @@ public class ProductController {
             Map<String, String> errors = bindingResult.getFieldErrors().stream()
                     .collect(Collectors.toMap(
                             FieldError::getField,
-                            fieldError -> Objects.requireNonNullElse(fieldError.getDefaultMessage(), "Unknown error")  // Обработка null
+                            fieldError -> Objects.requireNonNullElse(fieldError.getDefaultMessage(), "Unknown error")
                     ));
             return ResponseEntity.badRequest().body(Map.of("errors", errors));
         }
@@ -75,7 +74,6 @@ public class ProductController {
         productService.saveProduct(principal, product, cityIds, files);
         return ResponseEntity.ok().build();
     }
-
 
 
     @GetMapping("/product/edit/{id}")
