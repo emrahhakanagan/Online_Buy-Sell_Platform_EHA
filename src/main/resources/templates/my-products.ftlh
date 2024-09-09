@@ -10,11 +10,11 @@
     </a>
 
     <div class="collapse mb-3" id="collapseExample" style="">
-        <form action="/product/create" method="post" enctype="multipart/form-data">
+        <form id="productForm" action="/product/create" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="productName">Product Name</label>
-                <input type="text" required class="form-control"
-                       id="productName" name="title" title="Please enter the product name">
+                <input type="text" required class="form-control" id="productName" name="title">
+                <div id="titleError" style="color: red;"></div>
             </div>
             <div class="form-group">
                 <label for="price">Price</label>
@@ -25,6 +25,7 @@
                         <span class="input-group-text">€</span>
                     </div>
                 </div>
+                <div id="priceError" style="color: red;"></div>
             </div>
             <div class="form-group">
                 <label for="cities">Cities</label>
@@ -35,11 +36,13 @@
                         <option value="${city.id}">${city.city_name}</option>
                     </#list>
                 </select>
+                <div id="citiesError" style="color: red;"></div>
             </div>
             <div class="form-group">
                 <label for="description">Description</label>
                 <textarea required class="form-control" id="description" name="description"
                           title="Please enter a description"></textarea>
+                <div id="descriptionError" style="color: red;"></div>
             </div>
             <div class="form-group">
                 <div class="custom-file">
@@ -64,8 +67,6 @@
             <button type="submit" style="width: 100%" class="btn btn-dark">Add</button>
         </form>
     </div>
-
-
 
     <div class="card-columns">
         <#list products as product>
@@ -93,7 +94,7 @@
                     <div class="card-footer">
                         <#list product.cities as city>
                             ${city.city_name}<#if city_has_next>, </#if>
-                       </#list>
+                        </#list>
                     </div>
                 </div>
             </a>
@@ -105,6 +106,47 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+
+            $('#productForm').on('submit', function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/product/create',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        alert('Product added successfully!');
+                        location.reload();
+                    },
+                    error: function(response) {
+                        $('#titleError').text('');
+                        $('#priceError').text('');
+                        $('#citiesError').text('');
+                        $('#descriptionError').text('');
+
+                        if (response.responseJSON && response.responseJSON.errors) {
+                            var errors = response.responseJSON.errors;
+                            if (errors.title) {
+                                $('#titleError').text(errors.title);
+                            }
+                            if (errors.price) {
+                                $('#priceError').text(errors.price);
+                            }
+                            if (errors.cityIds) {
+                                $('#citiesError').text(errors.cityIds);
+                            }
+                            if (errors.description) {
+                                $('#descriptionError').text(errors.description);
+                            }
+                        }
+                    }
+                });
+            });
+
             $('.delete-product-button').on('click', function() {
                 var productId = $(this).data('product-id');
                 if (confirm('Are you sure you want to delete this product?')) {
