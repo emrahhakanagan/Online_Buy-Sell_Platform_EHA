@@ -71,7 +71,6 @@
     </form>
     <a href="/my/products" class="btn btn-secondary mt-3">Back</a>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
             $('.delete-button').on('click', function() {

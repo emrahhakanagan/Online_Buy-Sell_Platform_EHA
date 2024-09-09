@@ -32,8 +32,6 @@
         <button type="submit" style="width: 100%" class="btn btn-dark">Sign up</button>
     </form>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-
     <script>
         $(document).ready(function() {
             $('#registrationForm').on('submit', function(event) {
