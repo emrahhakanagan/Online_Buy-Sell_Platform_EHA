@@ -35,9 +35,9 @@
     <script>
         $(document).ready(function() {
             $('#registrationForm').on('submit', function(event) {
-                event.preventDefault(); // Останавливаем отправку формы
+                event.preventDefault();
 
-                var formData = new FormData(this); // Собираем данные формы
+                var formData = new FormData(this);
 
                 $.ajax({
                     type: 'POST',
@@ -47,17 +47,15 @@
                     contentType: false,
                     success: function(response) {
                         alert('Registration successful!');
-                        window.location.href = "/login"; // Перенаправляем на страницу логина
+                        window.location.href = "/login";
                     },
                     error: function(response) {
-                        // Очищаем предыдущие ошибки
                         $('#nameError').text('');
                         $('#emailError').text('');
                         $('#phoneNumberError').text('');
                         $('#passwordError').text('');
                         $('#passwordConfirmationError').text('');
 
-                        // Отображаем новые ошибки
                         if (response.responseJSON && response.responseJSON.errors) {
                             var errors = response.responseJSON.errors;
                             if (errors.name) {
