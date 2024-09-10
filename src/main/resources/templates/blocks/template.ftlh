@@ -14,10 +14,13 @@
         <img src="/static/images/logo.jpg" alt="Logo" style="width:100px;height:auto;">
 
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-        <script src="/static/js/jquery-3.6.0.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8= sha256-T+aPohYXbm0fRYDpJLr+zJ9RmYTswGsahAoIsNiMld4="
+                crossorigin="anonymous"></script>
 
         <!-- Bootstrap JS -->
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"
+                crossorigin="anonymous"></script>
 
         <title>ONLINE BUY-SELL PLATFORM EHA</title>
     </head>
