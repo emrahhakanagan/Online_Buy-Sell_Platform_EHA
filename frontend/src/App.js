@@ -1,13 +1,17 @@
 import React from 'react';
-import './App.css';
-import RegistrationForm from './components/RegistrationForm';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Index from './components/Index';
+import AnotherPage from './components/AnotherPage'; // если у тебя есть другие страницы
 
 function App() {
-  return (
-      <div className="App">
-        <RegistrationForm />  {/* Отображаем форму регистрации */}
-      </div>
-  );
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/another-page" element={<AnotherPage />} /> {/* Пример другого маршрута */}
+            </Routes>
+        </Router>
+    );
 }
 
 export default App;
