@@ -1,4 +1,4 @@
-<img src="./images/logo.jpg" alt="logo" style="width:150px;height:auto;">
+<img src="images/logo.jpg" alt="logo" style="width:150px;height:auto;">
 
 # Online Buy-Sell Platform EHA
 #### in progress ...

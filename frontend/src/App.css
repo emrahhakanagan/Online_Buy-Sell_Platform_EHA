@@ -1,38 +1,107 @@
-.App {
+header {
+  display: flex;
+  align-items: flex-end; /* выравниваем по нижнему краю */
+}
+
+/* Логотип остается слева */
+.logo-container {
+  margin-right: 20px; /* Добавляем отступ для логотипа */
+}
+
+.logo {
+  width: 130px; /* увеличиваем ширину логотипа в 2 раза */
+  height: auto; /* сохраняем пропорции по высоте */
+  margin-top: 10px;
+}
+
+
+.banner-container {
+  background-color: #333;
+  color: white;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 05px;
+  height: 40px;
+  margin-bottom: 15px;
+}
+
+h1 {
+  font-size: 1.5em;
+  margin: 0 auto;
+}
+
+.login-btn {
+  background-color: green;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.search-section h2 {
   text-align: center;
+  width: 100%;
+  font-size: 2em;
+  margin-bottom: 20px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.search-section {
+  margin-top: 50px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.search-form {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.search-options {
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-options select {
+  padding: 10px;
+  font-size: 1.2em;
+  margin-right: 20px;
+  width: 200px;
+}
+
+.search-options input {
+  padding: 10px;
+  font-size: 1.2em;
+  width: calc(77% - 220px);
+  margin-right: 10px;
+}
+
+.search-btn-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.search-btn {
+  background-color: green;
   color: white;
+  padding: 10px 30px;
+  font-size: 1.3em;
+  border: none;
+  cursor: pointer;
+  width: 80%;
+  text-align: center;
+  border-radius: 5px;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.products {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  font-size: 1.5em;
+  color: red;
 }
