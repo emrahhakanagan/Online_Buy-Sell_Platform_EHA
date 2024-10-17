@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
+import SignInModal from './SignInModal'; // Импортируем компонент модального окна
 
 function Index() {
+    const [isModalOpen, setIsModalOpen] = useState(false); // Хук состояния для управления окном
+
+    const openModal = () => setIsModalOpen(true); // Открытие модального окна
+    const closeModal = () => setIsModalOpen(false); // Закрытие модального окна
+
     return (
         <div className="container">
             <header className="header">
                 <div className="logo-container">
-                    <img src={require('../logo.jpg')} alt="EHA Logo" className="logo"/>
+                    <img src={require('../logo.jpg')} alt="EHA Logo" className="logo" />
                 </div>
                 <div className="banner-container">
                     <h1>ONLINE BUY-SELL PLATFORM eha</h1>
-                    <button className="login-btn">Sign In</button>
+                    {/* Связываем кнопку Sign In с открытием модального окна */}
+                    <button className="login-btn" onClick={openModal}>Sign In</button>
                 </div>
             </header>
             <section className="search-section">
@@ -33,6 +40,9 @@ function Index() {
             <section className="products">
                 <p>No products found on our platform.</p>
             </section>
+
+            {/* Вставляем модальное окно */}
+            <SignInModal isOpen={isModalOpen} onClose={closeModal} />
         </div>
     );
 }
