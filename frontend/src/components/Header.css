@@ -1,0 +1,49 @@
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333; /* Темный фон для шапки */
+    padding: 10px 20px;
+    color: white;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.logo img {
+    height: 50px; /* Высота логотипа */
+    margin-right: 20px;
+}
+
+.title h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+}
+
+.title span {
+    color: #4CAF50; /* Цвет текста 'eha' */
+}
+
+.login-button .sign-in-button {
+    background-color: #4CAF50; /* Цвет кнопки */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.login-button .sign-in-button:hover {
+    background-color: #45a049;
+}
+
+/* Стили для LanguageSelector */
+.language-selector {
+    margin-left: 20px;
+}
