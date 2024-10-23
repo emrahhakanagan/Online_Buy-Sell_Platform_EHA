@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import SignInModal from './SignInModal'; // Импортируем компонент модального окна
+import SignInModal from './SignInModal'; // Import modal window component
+import LanguageSelector from './LanguageSelector';
+
 
 function Index() {
     const [isModalOpen, setIsModalOpen] = useState(false); // Хук состояния для управления окном
 
-    const openModal = () => setIsModalOpen(true); // Открытие модального окна
-    const closeModal = () => setIsModalOpen(false); // Закрытие модального окна
+    const openModal = () => setIsModalOpen(true); // Opening a modal window
+    const closeModal = () => setIsModalOpen(false); // Closing a modal window
 
     return (
         <div className="container">
@@ -14,8 +16,9 @@ function Index() {
                     <img src={require('../logo.jpg')} alt="EHA Logo" className="logo" />
                 </div>
                 <div className="banner-container">
+                    <LanguageSelector />
                     <h1>ONLINE BUY-SELL PLATFORM eha</h1>
-                    {/* Связываем кнопку Sign In с открытием модального окна */}
+                    {/* Bind the Sign In button to open a modal window */}
                     <button className="login-btn" onClick={openModal}>Sign In</button>
                 </div>
             </header>
@@ -41,7 +44,7 @@ function Index() {
                 <p>No products found on our platform.</p>
             </section>
 
-            {/* Вставляем модальное окно */}
+            {/* Insert modal window */}
             <SignInModal isOpen={isModalOpen} onClose={closeModal} />
         </div>
     );
