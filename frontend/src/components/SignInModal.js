@@ -17,7 +17,7 @@ function SignInModal({ isOpen, onClose }) {
 
     return (
         <>
-            {/* Окно авторизации */}
+            {/* Authorization window */}
             {isOpen && (
                 <div className="modal" onClick={handleBackgroundClick}>
                     <div className="modal-content">
@@ -34,13 +34,13 @@ function SignInModal({ isOpen, onClose }) {
                         </form>
                         <p className="signup-text">
                             Don't have a ONLINE BUY-SELL PLATFORM EHA account?
-                            <a href="#" onClick={openSignUpModal} className="signup-link">Sign up!</a>
+                            <button onClick={openSignUpModal} className="signup-link">Sign up!</button>
                         </p>
                     </div>
                 </div>
             )}
 
-            {/* Модальное окно регистрации */}
+            {/* Modal registration window */}
             {isSignUpOpen && <SignUpModal isOpen={isSignUpOpen} onClose={() => setIsSignUpOpen(false)} />}
         </>
     );
